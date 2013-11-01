@@ -10,6 +10,8 @@ class PositionCoordinate : public Coordinate {
         virtual ~PositionCoordinate();
         virtual uint fromCube(const Cube& cube);
         virtual Cube toCube(uint coord);
+        static uint posToInt(const char* perm, int nb, const std::unordered_set<char>& pieces);
+        static void intToPos(uint in, char* perm, int nb, const std::unordered_set<char>& pieces);
     private:
         uint _nb;
         std::unordered_set<char> _pieces;

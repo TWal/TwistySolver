@@ -22,11 +22,29 @@ OrientationCoordinate::~OrientationCoordinate() {
 
 uint OrientationCoordinate::fromCube(const Cube& cube) {
     _cubeToPerm(cube, _tempOrient);
-    return Utils::orientToInt(_tempOrient, _nb, _base);
+    return orientToInt(_tempOrient, _nb, _base);
 }
 
 Cube OrientationCoordinate::toCube(uint coord) {
-    Utils::intToOrient(coord, _tempOrient, _nb, _base);
+    intToOrient(coord, _tempOrient, _nb, _base);
     return _permToCube(_tempOrient);
+}
+
+uint OrientationCoordinate::orientToInt(const char* orients, int nb, char base) {
+    uint r = 0;
+    for(int i = 0; i < nb-1; ++i) {
+        r = r * base + orients[i];
+    }
+    return r;
+}
+
+void OrientationCoordinate::intToOrient(uint in, char* orients, int nb, char base) {
+    uint sum = 0;
+    for(int i = nb-2; i >= 0; --i) {
+        orients[i] = in % base;
+        sum += orients[i];
+        in /= base;
+    }
+    orients[nb-1] = base - (sum % base);
 }
 

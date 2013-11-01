@@ -3,6 +3,8 @@
 #include <string.h>
 #include "Utils.h"
 #include "types.h"
+#include "PermutationCoordinate.h"
+#include "OrientationCoordinate.h"
 
   //{UFL, UBL, UBR, UFR, DFL, DBL, DBR, DFR}  //ID
 const char Cube::cpermMove[6][8] = {
@@ -55,10 +57,10 @@ Cube::Cube() {
 }
 
 Cube::Cube(uint cp, uint ep, uint co, uint eo) {
-    Utils::intToPerm(cp, _cperm, 8);
-    Utils::intToPerm(ep, _eperm, 12);
-    Utils::intToOrient(co, _cori, 8, 3);
-    Utils::intToOrient(eo, _eori, 12, 2);
+    PermutationCoordinate::intToPerm(cp, _cperm, 8);
+    PermutationCoordinate::intToPerm(ep, _eperm, 12);
+    OrientationCoordinate::intToOrient(co, _cori, 8, 3);
+    OrientationCoordinate::intToOrient(eo, _eori, 12, 2);
 }
 
 Cube::Cube(const char* cp, const char* ep, const char* co, const char* eo) {

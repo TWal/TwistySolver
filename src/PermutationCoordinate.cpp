@@ -21,11 +21,37 @@ PermutationCoordinate::~PermutationCoordinate() {
 
 uint PermutationCoordinate::fromCube(const Cube& cube) {
     _cubeToPerm(cube, _tempPerm);
-    return Utils::permToInt(_tempPerm, _nb);
+    return permToInt(_tempPerm, _nb);
 }
 
 Cube PermutationCoordinate::toCube(uint coord) {
-    Utils::intToPerm(coord, _tempPerm, _nb);
+    intToPerm(coord, _tempPerm, _nb);
     return _permToCube(_tempPerm);
+}
+
+uint PermutationCoordinate::permToInt(const char* perm, int nb) {
+    uint r = 0;
+    for(int i = 0; i < nb; ++i) {
+        r *= (nb - i);
+        for(int j = i+1; j < nb; ++j)  {
+            if(perm[j] < perm[i]) {
+                ++r;
+            }
+        }
+    }
+    return r;
+}
+
+void PermutationCoordinate::intToPerm(uint in, char* perm, int nb) {
+    perm[nb-1] = 0;
+    for(int i = nb-2; i >= 0; --i) {
+        perm[i] = in % (nb - i);
+        in /= (nb - i);
+        for(int j = i+1; j  < nb; ++j) {
+            if(perm[j] >= perm[i]) {
+                ++perm[j];
+            }
+        }
+    }
 }
 
