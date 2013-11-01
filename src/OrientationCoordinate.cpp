@@ -1,32 +1,32 @@
 #include "OrientationCoordinate.h"
 #include "Utils.h"
 
-OrientationCoordinate::OrientationCoordinate(uint nb, uint base, Cube(*buildCube)(const char*), void(*unbuildCube)(const Cube&, char*)) :
-    _nb(nb), _base(base), _buildCube(buildCube), _unbuildCube(unbuildCube), _moveTable(nullptr), _size(Utils::pow(_base, _nb - 1))  {
+OrientationCoordinate::OrientationCoordinate(uint nb, uint base, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm) :
+    Coordinate(Utils::pow(base, nb - 1)),
+    _nb(nb),
+    _base(base),
+    _permToCube(permToCube),
+    _cubeToPerm(cubeToPerm),
+    _tempOrient(new char[_nb]) {
+
+    _init([this](uint coord) {
+        return toCube(coord);
+    }, [this](const Cube& cube) {
+        return fromCube(cube);
+    });
 }
 
 OrientationCoordinate::~OrientationCoordinate() {
-    delete[] _moveTable;
+    delete[] _tempOrient;
 }
 
-void OrientationCoordinate::buildMoveTable() {
-    _moveTable = new uint[_size * 6 * 3];
-    char* orient = new char[_nb];
+uint OrientationCoordinate::fromCube(const Cube& cube) {
+    _cubeToPerm(cube, _tempOrient);
+    return Utils::orientToInt(_tempOrient, _nb, _base);
+}
 
-    for(uint i = 0; i < _size; ++i) {
-        Utils::intToOrient(i, orient, _nb, _base);
-        Cube c = _buildCube(orient);
-        for(uint j = 0; j < 6; ++j) {
-            Cube move = Cube((AXIS)j);
-            c.applyMult(move);
-            for(uint k = 0; k < 3; ++k) {
-                _unbuildCube(c, orient);
-                _moveTable[i*6*3 + j*3 + k] = Utils::orientToInt(orient, _nb, _base);
-                c.applyMult(move);
-            }
-        }
-    }
-
-    delete[] orient;
+Cube OrientationCoordinate::toCube(uint coord) {
+    Utils::intToOrient(coord, _tempOrient, _nb, _base);
+    return _permToCube(_tempOrient);
 }
 

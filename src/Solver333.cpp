@@ -49,12 +49,6 @@ Solver333::Solver333() :
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, &cube.getEdgePerm()[8], 4);
     }) {
-    _eo.buildMoveTable();
-    _co.buildMoveTable();
-    _udslice.buildMoveTable();
-    _ep.buildMoveTable();
-    _cp.buildMoveTable();
-    _udslicep.buildMoveTable();
     _buildPhase1EdgePruningTable();
     _buildPhase1CornerPruningTable();
     _buildPhase2EdgePruningTable();
@@ -181,9 +175,9 @@ void Solver333::_buildPhase2CornerPruningTable() {
 }
 
 std::vector<uint> Solver333::solve(const Cube& cube) {
-    uint eo = Utils::orientToInt(cube.getEdgeOri(), 12, 2);
-    uint co = Utils::orientToInt(cube.getCornerOri(), 8, 3);
-    uint udslice = Utils::posToInt(cube.getEdgePerm(), 12, {FL, FR, BR, BL});
+    uint eo = _eo.fromCube(cube);
+    uint co = _co.fromCube(cube);
+    uint udslice = _udslice.fromCube(cube);
     bool found = false;
     uint bound = _estimateCostPhase1(eo, co, udslice);
     uint solution1[30];
@@ -199,9 +193,9 @@ std::vector<uint> Solver333::solve(const Cube& cube) {
         }
     }
     std::vector<uint> solution(solution1, &solution1[bound]);
-    uint ep = Utils::permToInt(cube2.getEdgePerm(), 8);
-    uint cp = Utils::permToInt(cube2.getCornerPerm(), 8);
-    uint udslicep = Utils::permToInt(&cube2.getEdgePerm()[8], 4);
+    uint ep = _ep.fromCube(cube2);
+    uint cp = _cp.fromCube(cube2);
+    uint udslicep = _udslicep.fromCube(cube2);
     found = false;
     bound = _estimateCostPhase2(ep, cp, udslicep);
     uint solution2[30];

@@ -3,28 +3,19 @@
 
 #include "types.h"
 #include "Cube.h"
+#include "Coordinate.h"
 
-class PermutationCoordinate {
+class PermutationCoordinate : public Coordinate {
     public:
-        PermutationCoordinate(uint nb, Cube(*buildCube)(const char*), void(*unbuildCube)(const Cube&, char*));
-        ~PermutationCoordinate();
-        void buildMoveTable();
-        inline uint moveTableLookup(uint perm, AXIS axis, uint n) const {
-            return _moveTable[perm*6*3 + (uint)axis*3 + n-1];
-        }
-        inline uint moveTableLookup(uint perm, uint n) const {
-            return _moveTable[perm*6*3 + n];
-        }
-        inline uint size() const {
-            return _size;
-        }
-
+        PermutationCoordinate(uint nb, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm);
+        virtual ~PermutationCoordinate();
+        virtual uint fromCube(const Cube& cube);
+        virtual Cube toCube(uint coord);
     private:
         uint _nb;
-        Cube(*_buildCube)(const char*);
-        void(*_unbuildCube)(const Cube&, char*);
-        uint* _moveTable;
-        uint _size;
+        std::function<Cube (const char*)> _permToCube;
+        std::function<void (const Cube&, char*)> _cubeToPerm;
+        char* _tempPerm;
 };
 
 #endif

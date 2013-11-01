@@ -1,31 +1,31 @@
 #include "PermutationCoordinate.h"
 #include "Utils.h"
 
-PermutationCoordinate::PermutationCoordinate(uint nb, Cube(*buildCube)(const char*), void(*unbuildCube)(const Cube&, char*)) :
-    _nb(nb), _buildCube(buildCube), _unbuildCube(unbuildCube), _moveTable(nullptr), _size(Utils::fac(_nb)) {
+PermutationCoordinate::PermutationCoordinate(uint nb, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm) :
+    Coordinate(Utils::fac(nb)),
+    _nb(nb),
+    _permToCube(permToCube),
+    _cubeToPerm(cubeToPerm),
+    _tempPerm(new char[_nb]) {
+
+    _init([this](uint coord) {
+        return toCube(coord);
+    }, [this](const Cube& cube) {
+        return fromCube(cube);
+    });
 }
 
 PermutationCoordinate::~PermutationCoordinate() {
-    delete[] _moveTable;
+    delete[] _tempPerm;
 }
 
-void PermutationCoordinate::buildMoveTable() {
-    _moveTable = new uint[_size * 6 * 3];
-    char* perm = new char[_nb];
-
-    for(uint i = 0; i < _size; ++i) {
-        Utils::intToPerm(i, perm, _nb);
-        Cube c = _buildCube(perm);
-        for(uint j = 0; j < 6; ++j) {
-            Cube move = Cube((AXIS)j);
-            c.applyMult(move);
-            for(uint k = 0; k < 3; ++k) {
-                _unbuildCube(c, perm);
-                _moveTable[i*6*3 + j*3 + k] = Utils::permToInt(perm, _nb);
-                c.applyMult(move);
-            }
-        }
-    }
-
-    delete[] perm;
+uint PermutationCoordinate::fromCube(const Cube& cube) {
+    _cubeToPerm(cube, _tempPerm);
+    return Utils::permToInt(_tempPerm, _nb);
 }
+
+Cube PermutationCoordinate::toCube(uint coord) {
+    Utils::intToPerm(coord, _tempPerm, _nb);
+    return _permToCube(_tempPerm);
+}
+
