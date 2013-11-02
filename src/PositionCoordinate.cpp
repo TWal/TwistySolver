@@ -9,11 +9,7 @@ PositionCoordinate::PositionCoordinate(uint nb, std::unordered_set<char> pieces,
     _cubeToPerm(cubeToPerm),
     _tempPerm(new char[_nb]) {
 
-    _init([this](uint coord) {
-        return toCube(coord);
-    }, [this](const Cube& cube) {
-        return fromCube(cube);
-    });
+    _init();
 }
 
 PositionCoordinate::~PositionCoordinate() {

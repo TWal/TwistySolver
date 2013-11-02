@@ -8,11 +8,7 @@ PermutationCoordinate::PermutationCoordinate(uint nb, std::function<Cube (const 
     _cubeToPerm(cubeToPerm),
     _tempPerm(new char[_nb]) {
 
-    _init([this](uint coord) {
-        return toCube(coord);
-    }, [this](const Cube& cube) {
-        return fromCube(cube);
-    });
+    _init();
 }
 
 PermutationCoordinate::~PermutationCoordinate() {

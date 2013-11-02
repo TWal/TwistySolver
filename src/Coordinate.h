@@ -21,7 +21,7 @@ class Coordinate {
         virtual uint fromCube(const Cube& cube) const = 0;
         virtual Cube toCube(uint coord) const = 0;
     protected:
-        void _init(std::function<Cube (uint)> buildCube, std::function<uint (const Cube&)> unbuildCube);
+        void _init();
         uint _size;
         uint* _moveTable;
 };

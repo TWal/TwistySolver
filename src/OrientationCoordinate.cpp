@@ -9,11 +9,7 @@ OrientationCoordinate::OrientationCoordinate(uint nb, uint base, std::function<C
     _cubeToPerm(cubeToPerm),
     _tempOrient(new char[_nb]) {
 
-    _init([this](uint coord) {
-        return toCube(coord);
-    }, [this](const Cube& cube) {
-        return fromCube(cube);
-    });
+    _init();
 }
 
 OrientationCoordinate::~OrientationCoordinate() {
