@@ -20,12 +20,12 @@ OrientationCoordinate::~OrientationCoordinate() {
     delete[] _tempOrient;
 }
 
-uint OrientationCoordinate::fromCube(const Cube& cube) {
+uint OrientationCoordinate::fromCube(const Cube& cube) const {
     _cubeToPerm(cube, _tempOrient);
     return orientToInt(_tempOrient, _nb, _base);
 }
 
-Cube OrientationCoordinate::toCube(uint coord) {
+Cube OrientationCoordinate::toCube(uint coord) const {
     intToOrient(coord, _tempOrient, _nb, _base);
     return _permToCube(_tempOrient);
 }

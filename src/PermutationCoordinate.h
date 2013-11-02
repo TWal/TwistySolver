@@ -9,8 +9,8 @@ class PermutationCoordinate : public Coordinate {
     public:
         PermutationCoordinate(uint nb, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm);
         virtual ~PermutationCoordinate();
-        virtual uint fromCube(const Cube& cube);
-        virtual Cube toCube(uint coord);
+        virtual uint fromCube(const Cube& cube) const;
+        virtual Cube toCube(uint coord) const;
         static uint permToInt(const char* perm, int nb);
         static void intToPerm(uint in, char* perm, int nb);
     private:

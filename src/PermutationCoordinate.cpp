@@ -19,12 +19,12 @@ PermutationCoordinate::~PermutationCoordinate() {
     delete[] _tempPerm;
 }
 
-uint PermutationCoordinate::fromCube(const Cube& cube) {
+uint PermutationCoordinate::fromCube(const Cube& cube) const {
     _cubeToPerm(cube, _tempPerm);
     return permToInt(_tempPerm, _nb);
 }
 
-Cube PermutationCoordinate::toCube(uint coord) {
+Cube PermutationCoordinate::toCube(uint coord) const {
     intToPerm(coord, _tempPerm, _nb);
     return _permToCube(_tempPerm);
 }

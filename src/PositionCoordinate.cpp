@@ -20,12 +20,12 @@ PositionCoordinate::~PositionCoordinate() {
     delete[] _tempPerm;
 }
 
-uint PositionCoordinate::fromCube(const Cube& cube) {
+uint PositionCoordinate::fromCube(const Cube& cube) const {
     _cubeToPerm(cube, _tempPerm);
     return posToInt(_tempPerm, _nb, _pieces);
 }
 
-Cube PositionCoordinate::toCube(uint coord) {
+Cube PositionCoordinate::toCube(uint coord) const {
     intToPos(coord, _tempPerm, _nb, _pieces);
     return _permToCube(_tempPerm);
 }

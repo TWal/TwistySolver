@@ -59,7 +59,7 @@ class PruningTable {
             delete[] _pruningTable;
         }
 
-        inline uint makeIndex(const std::array<uint, N>& indexes) {
+        inline uint makeIndex(const std::array<uint, N>& indexes) const {
             uint res = 0;
             for(uint i = 0; i < N; ++i) {
                 res *= _coords[i]->size();
@@ -68,14 +68,14 @@ class PruningTable {
             return res;
         }
 
-        inline void unmakeIndex(uint entry, std::array<uint, N>& indexes) {
+        inline void unmakeIndex(uint entry, std::array<uint, N>& indexes) const {
             for(int i = N-1; i >= 0; --i) {
                 indexes[i] = entry % _coords[i]->size();
                 entry /= _coords[i]->size();
             }
         }
 
-        inline char lookup(const std::array<uint, N>& indexes) {
+        inline char lookup(const std::array<uint, N>& indexes) const {
             return _pruningTable[makeIndex(indexes)];
         }
 };
