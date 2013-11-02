@@ -1,6 +1,8 @@
 CMakeCache.txt
 CMakeFiles
 Makefile
-cmake_install.cmake
+*.cmake
 bin
 compile_commands.json
+*.so
+Testing

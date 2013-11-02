@@ -45,6 +45,6 @@ void OrientationCoordinate::intToOrient(uint in, char* orients, int nb, char bas
         sum += orients[i];
         in /= base;
     }
-    orients[nb-1] = base - (sum % base);
+    orients[nb-1] = (base*nb - sum) % base;
 }
 
