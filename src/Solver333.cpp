@@ -4,7 +4,6 @@
 #include <algorithm>
 
 Solver333::Solver333() :
-    _phase1EPT(nullptr), _phase1CPT(nullptr),
     _eo(12, 2, [](const char* orient) {
         char nothing[12] = {0};
         return Cube(nothing, nothing, nothing, orient);
@@ -48,130 +47,14 @@ Solver333::Solver333() :
         return Cube(nothing, extPerm, nothing, nothing);
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, &cube.getEdgePerm()[8], 4);
-    }) {
-    _buildPhase1EdgePruningTable();
-    _buildPhase1CornerPruningTable();
-    _buildPhase2EdgePruningTable();
-    _buildPhase2CornerPruningTable();
+    }),
+    _phase1EPT({&_eo, &_udslice}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}),
+    _phase1CPT({&_co, &_udslice}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}),
+    _phase2EPT({&_ep, &_udslicep}, {U*3, U*3+1, U*3+2, D*3, D*3+1, D*3+2, R*3+1, B*3+1, L*3+1, F*3+1}),
+    _phase2CPT({&_cp, &_udslicep}, {U*3, U*3+1, U*3+2, D*3, D*3+1, D*3+2, R*3+1, B*3+1, L*3+1, F*3+1}) {
 }
 
 Solver333::~Solver333() {
-    delete[] _phase1EPT;
-    delete[] _phase1CPT;
-}
-
-void Solver333::_buildPhase1EdgePruningTable() {
-    uint nbEntries = _eo.size() * _udslice.size();
-    _phase1EPT = new char[nbEntries];
-    memset(_phase1EPT, -1, nbEntries);
-    _phase1EPT[0] = 0;
-    uint done = 1;
-    char depth = 0;
-    while(done < nbEntries) {
-        for(uint i = 0; i < nbEntries; ++i) {
-            if(_phase1EPT[i] == depth) {
-                uint eo = i / _udslice.size();
-                uint udslice = i % _udslice.size();
-                for(uint j = 0; j < 18; ++j) {
-                    uint newEo = _eo.moveTableLookup(eo, j);
-                    uint newUdslice = _udslice.moveTableLookup(udslice, j);
-                    uint newEntry = newEo * _udslice.size() + newUdslice;
-                    if(_phase1EPT[newEntry] == -1) {
-                        _phase1EPT[newEntry] = depth + 1;
-                        ++done;
-                    }
-                }
-            }
-        }
-        ++depth;
-    }
-}
-
-void Solver333::_buildPhase1CornerPruningTable() {
-    uint nbEntries = _co.size() * _udslice.size();
-    _phase1CPT = new char[nbEntries];
-    memset(_phase1CPT, -1, nbEntries);
-    _phase1CPT[0] = 0;
-    uint done = 1;
-    char depth = 0;
-    while(done < nbEntries) {
-        for(uint i = 0; i < nbEntries; ++i) {
-            if(_phase1CPT[i] == depth) {
-                uint eo = i / _udslice.size();
-                uint udslice = i % _udslice.size();
-                for(uint j = 0; j < 18; ++j) {
-                    uint newEo = _co.moveTableLookup(eo, j);
-                    uint newUdslice = _udslice.moveTableLookup(udslice, j);
-                    uint newEntry = newEo * _udslice.size() + newUdslice;
-                    if(_phase1CPT[newEntry] == -1) {
-                        _phase1CPT[newEntry] = depth + 1;
-                        ++done;
-                    }
-                }
-            }
-        }
-        ++depth;
-    }
-}
-
-void Solver333::_buildPhase2EdgePruningTable() {
-    uint nbEntries = _ep.size() * _udslicep.size();
-    _phase2EPT = new char[nbEntries];
-    memset(_phase2EPT, -1, nbEntries);
-    _phase2EPT[0] = 0;
-    uint done = 1;
-    char depth = 0;
-    while(done < nbEntries) {
-        for(uint i = 0; i < nbEntries; ++i) {
-            if(_phase2EPT[i] == depth) {
-                uint ep = i / _udslicep.size();
-                uint udslicep = i % _udslicep.size();
-                for(uint j = 0; j < 18; ++j) {
-                    if((j/3) != U && (j/3) != D && (j%3) != 1) {
-                        continue;
-                    }
-                    uint newEp = _ep.moveTableLookup(ep, j);
-                    uint newUdslicep = _udslicep.moveTableLookup(udslicep, j);
-                    uint newEntry = newEp * _udslicep.size() + newUdslicep;
-                    if(_phase2EPT[newEntry] == -1) {
-                        _phase2EPT[newEntry] = depth + 1;
-                        ++done;
-                    }
-                }
-            }
-        }
-        ++depth;
-    }
-}
-
-void Solver333::_buildPhase2CornerPruningTable() {
-    uint nbEntries = _cp.size() * _udslicep.size();
-    _phase2CPT = new char[nbEntries];
-    memset(_phase2CPT, -1, nbEntries);
-    _phase2CPT[0] = 0;
-    uint done = 1;
-    char depth = 0;
-    while(done < nbEntries) {
-        for(uint i = 0; i < nbEntries; ++i) {
-            if(_phase2CPT[i] == depth) {
-                uint cp = i / _udslicep.size();
-                uint udslicep = i % _udslicep.size();
-                for(uint j = 0; j < 18; ++j) {
-                    if((j/3) != U && (j/3) != D && (j%3) != 1) {
-                        continue;
-                    }
-                    uint newCp = _cp.moveTableLookup(cp, j);
-                    uint newUdslicep = _udslicep.moveTableLookup(udslicep, j);
-                    uint newEntry = newCp * _udslicep.size() + newUdslicep;
-                    if(_phase2CPT[newEntry] == -1) {
-                        _phase2CPT[newEntry] = depth + 1;
-                        ++done;
-                    }
-                }
-            }
-        }
-        ++depth;
-    }
 }
 
 std::vector<uint> Solver333::solve(const Cube& cube) {
@@ -282,11 +165,11 @@ uint Solver333::_searchPhase2(uint ep, uint cp, uint udslicep, uint cost, uint b
 }
 
 uint Solver333::_estimateCostPhase1(uint eo, uint co, uint udslice) {
-    return std::max(_phase1EPT[eo*_udslice.size() + udslice], _phase1CPT[co*_udslice.size() + udslice]);
+    return std::max(_phase1EPT.lookup({eo,udslice}), _phase1CPT.lookup({co, udslice}));
 }
 
 uint Solver333::_estimateCostPhase2(uint ep, uint cp, uint udslicep) {
-    return std::max(_phase2EPT[ep*_udslicep.size() + udslicep], _phase2CPT[cp*_udslicep.size() + udslicep]);
+    return std::max(_phase2EPT.lookup({ep, udslicep}), _phase2CPT.lookup({cp, udslicep}));
 }
 
 bool Solver333::_isMoveDisallowed(uint axis, uint* solution, uint depth) {
