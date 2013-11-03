@@ -18,7 +18,9 @@ class Solver333 {
         uint _searchPhase2(uint ep, uint cp, uint udslicep, uint cost, uint bound, bool& found, uint* solution);
         uint _estimateCostPhase1(uint eo, uint co, uint udslice);
         uint _estimateCostPhase2(uint ep, uint cp, uint udslicep);
-        bool _isMoveDisallowed(uint axis, uint* solution, uint depth);
+        static inline bool _isMoveDisallowed(uint axis, uint* solution, uint depth) {
+            return (depth != 0) && ((axis == (solution[depth-1]/3)) || (axis+3 == (solution[depth-1]/3)));
+        }
         OrientationCoordinate _eo;
         OrientationCoordinate _co;
         PositionCoordinate _udslice;

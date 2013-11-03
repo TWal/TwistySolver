@@ -3,6 +3,9 @@
 #include "Utils.h"
 #include <algorithm>
 
+static const std::vector<uint> phase1Moves = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+static const std::vector<uint> phase2Moves = {U*3, U*3+1, U*3+2, D*3, D*3+1, D*3+2, R*3+1, B*3+1, L*3+1, F*3+1};
+
 Solver333::Solver333() :
     _eo(12, 2, [](const char* orient) {
         char nothing[12] = {0};
@@ -48,10 +51,10 @@ Solver333::Solver333() :
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, &cube.getEdgePerm()[8], 4);
     }),
-    _phase1EPT({&_eo, &_udslice}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}),
-    _phase1CPT({&_co, &_udslice}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}),
-    _phase2EPT({&_ep, &_udslicep}, {U*3, U*3+1, U*3+2, D*3, D*3+1, D*3+2, R*3+1, B*3+1, L*3+1, F*3+1}),
-    _phase2CPT({&_cp, &_udslicep}, {U*3, U*3+1, U*3+2, D*3, D*3+1, D*3+2, R*3+1, B*3+1, L*3+1, F*3+1}) {
+    _phase1EPT({&_eo, &_udslice}, phase1Moves),
+    _phase1CPT({&_co, &_udslice}, phase1Moves),
+    _phase2EPT({&_ep, &_udslicep}, phase2Moves),
+    _phase2CPT({&_cp, &_udslicep}, phase2Moves) {
 }
 
 Solver333::~Solver333() {
@@ -171,18 +174,4 @@ uint Solver333::_estimateCostPhase1(uint eo, uint co, uint udslice) {
 uint Solver333::_estimateCostPhase2(uint ep, uint cp, uint udslicep) {
     return std::max(_phase2EPT.lookup({ep, udslicep}), _phase2CPT.lookup({cp, udslicep}));
 }
-
-bool Solver333::_isMoveDisallowed(uint axis, uint* solution, uint depth) {
-    if(depth == 0) {
-        return false;
-    }
-    if(axis == (solution[depth-1]/3)) {
-        return true;
-    }
-    if(axis+3 == (solution[depth-1]/3)) {
-        return true;
-    }
-    return false;
-}
-
 
