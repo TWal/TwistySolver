@@ -212,3 +212,22 @@ void Parser333::queryFace(std::string& s) {
     }
 }
 
+Cube Parser333::parseArgs(int argc, char** argv) {
+    AXIS axisOrder[6] = {U, F, R, B, L, D};
+    std::vector<std::string> def(6, "");
+
+    if(argc <= 6) {
+        fprintf(stderr, "Six faces are needed, you have %d\n", argc-1);
+        exit(-1);
+    }
+
+    for(int i = 0; i < 6; ++i) {
+        def[axisOrder[i]] = argv[i+1];
+        if(def[axisOrder[i]].size() != 9) {
+            fprintf(stderr, "There a 9 stickers on a face, you have %d on the face %d\n", def[axisOrder[i]].size(), i);
+            exit(-1);
+        }
+    }
+    return parse(def);
+}
+

@@ -43,12 +43,18 @@ void printSolution(const std::vector<uint>& solution) {
     printf("\n");
 }
 
-int main() {
+int main(int argc, char** argv) {
     printf("Building move tables and pruning tables...\n");
     Solver333 solver;
     printf("Done.\n");
 
-    Cube cube = Parser333::queryCube();
+    Cube cube;
+    if(argc == 1) {
+        cube = Parser333::queryCube();
+    } else {
+        cube = Parser333::parseArgs(argc, argv);
+    }
+
 
     std::vector<uint> solution = solver.solve(cube);
     printSolution(solution);

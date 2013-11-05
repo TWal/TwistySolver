@@ -16,6 +16,7 @@ class Parser333 {
         static void sortAxis(std::vector<AXIS>& piece);
         static Cube queryCube();
         static void queryFace(std::string& s);
+        static Cube parseArgs(int argc, char** argv);
 };
 
 #endif
