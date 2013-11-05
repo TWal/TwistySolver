@@ -2,6 +2,7 @@
 
 #include "Cube.h"
 #include "Solver333.h"
+#include "Parser333.h"
 
 void printSolution(const std::vector<uint>& solution) {
     for(uint i : solution) {
@@ -47,15 +48,7 @@ int main() {
     Solver333 solver;
     printf("Done.\n");
 
-    Cube cube;
-    for(int i = 0; i < 5; ++i) {
-        cube.applyMult(Cube(R));
-        cube.applyMult(Cube(B));
-        cube.applyMult(Cube(U));
-        cube.applyMult(Cube(L));
-        cube.applyMult(Cube(F));
-        cube.applyMult(Cube(D));
-    }
+    Cube cube = Parser333::queryCube();
 
     std::vector<uint> solution = solver.solve(cube);
     printSolution(solution);

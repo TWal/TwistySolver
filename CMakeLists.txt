@@ -11,6 +11,7 @@ set(${PROJECT_NAME}_SOURCES
     src/OrientationCoordinate.cpp
     src/PermutationCoordinate.cpp
     src/PositionCoordinate.cpp
+    src/Parser333.cpp
     src/Solver333.cpp
     src/Utils.cpp
 )
