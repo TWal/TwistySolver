@@ -60,7 +60,7 @@ Cube Parser333::parse(const std::vector<std::string>& strings) {
     for(uint i = 0; i < 8; ++i) {
         char c;
         if(!searchPiece(faces, cornerStickers, i, 3, 8, c)) {
-            fprintf(stderr, "Could not determine what is the corner %d\n", i);
+            fprintf(stderr, "Could not determine what is the corner %u\n", i);
             exit(-1);
         }
         cperm.push_back(c);
@@ -70,7 +70,7 @@ Cube Parser333::parse(const std::vector<std::string>& strings) {
     for(uint i = 0; i < 12; ++i) {
         char e;
         if(!searchPiece(faces, edgeStickers, i, 2, 12, e)) {
-            fprintf(stderr, "Could not determine what is the edge %d\n", i);
+            fprintf(stderr, "Could not determine what is the edge %u\n", i);
             exit(-1);
         }
         eperm.push_back(e);
@@ -82,19 +82,19 @@ Cube Parser333::parse(const std::vector<std::string>& strings) {
 
 void Parser333::colorToFace(const std::vector<std::string>& colors, std::vector<AXIS>& faces) {
     if(colors.size() != 6) {
-        fprintf(stderr, "A cube has 6 sides, you have %d\n", colors.size());
+        fprintf(stderr, "A cube has 6 sides, you have %zu\n", colors.size());
         exit(-1);
     }
     std::unordered_map<uint, char> colorToFaceMap;
     for(int i = 0; i < 6; ++i) {
         if(colors[i].size() != 9) {
-            fprintf(stderr, "A face has 9 stickers, %c has %d\n", (AXIS)i, colors[i].size());
+            fprintf(stderr, "A face has 9 stickers, %c has %zu\n", (AXIS)i, colors[i].size());
             exit(-1);
         }
         colorToFaceMap[colors[i][4]] = (AXIS)i;
     }
     if(colorToFaceMap.size() != 6) {
-        fprintf(stderr, "A cube has 6 different colors, you have %d\n", colorToFaceMap.size());
+        fprintf(stderr, "A cube has 6 different colors, you have %zu\n", colorToFaceMap.size());
         exit(-1);
     }
     for(const std::string& str : colors) {
@@ -224,7 +224,7 @@ Cube Parser333::parseArgs(int argc, char** argv) {
     for(int i = 0; i < 6; ++i) {
         def[axisOrder[i]] = argv[i+1];
         if(def[axisOrder[i]].size() != 9) {
-            fprintf(stderr, "There a 9 stickers on a face, you have %d on the face %d\n", def[axisOrder[i]].size(), i);
+            fprintf(stderr, "There a 9 stickers on a face, you have %zu on the face %d\n", def[axisOrder[i]].size(), i);
             exit(-1);
         }
     }

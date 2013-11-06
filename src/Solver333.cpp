@@ -51,10 +51,10 @@ Solver333::Solver333() :
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, &cube.getEdgePerm()[8], 4);
     }),
-    _phase1EPT({&_eo, &_udslice}, phase1Moves),
-    _phase1CPT({&_co, &_udslice}, phase1Moves),
-    _phase2EPT({&_ep, &_udslicep}, phase2Moves),
-    _phase2CPT({&_cp, &_udslicep}, phase2Moves) {
+    _phase1EPT({{&_eo, &_udslice}}, phase1Moves),
+    _phase1CPT({{&_co, &_udslice}}, phase1Moves),
+    _phase2EPT({{&_ep, &_udslicep}}, phase2Moves),
+    _phase2CPT({{&_cp, &_udslicep}}, phase2Moves) {
 }
 
 Solver333::~Solver333() {
@@ -168,10 +168,10 @@ uint Solver333::_searchPhase2(uint ep, uint cp, uint udslicep, uint cost, uint b
 }
 
 uint Solver333::_estimateCostPhase1(uint eo, uint co, uint udslice) {
-    return std::max(_phase1EPT.lookup({eo,udslice}), _phase1CPT.lookup({co, udslice}));
+    return std::max(_phase1EPT.lookup({{eo,udslice}}), _phase1CPT.lookup({{co, udslice}}));
 }
 
 uint Solver333::_estimateCostPhase2(uint ep, uint cp, uint udslicep) {
-    return std::max(_phase2EPT.lookup({ep, udslicep}), _phase2CPT.lookup({cp, udslicep}));
+    return std::max(_phase2EPT.lookup({{ep, udslicep}}), _phase2CPT.lookup({{cp, udslicep}}));
 }
 
