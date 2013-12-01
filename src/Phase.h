@@ -72,8 +72,10 @@ class Phase {
         pruning_tuple _pruning;
         std::vector<uint> _allowedMoves;
 
-        static inline bool _isMoveDisallowed(uint axis, uint* solution, uint depth) {
-            return (depth != 0) && (((axis/3) == (solution[depth-1]/3)) || ((axis/3)+3 == (solution[depth-1]/3)));
+        //TODO: The whole class is generic, but this method is not
+        inline bool _isMoveDisallowed(int move, int* solution, int depth) {
+            move = _allowedMoves[move];
+            return (depth != 0) && (((move/3) == (_allowedMoves[solution[depth-1]]/3)) || ((move/3)+3 == (_allowedMoves[solution[depth-1]]/3)));
         }
 
         template<unsigned int N> uint _pruningTableLookup(const std::array<uint, NC>& state) {
@@ -90,6 +92,18 @@ class Phase {
             }
         }
 
+        inline void _saveCoordToStack(const std::array<uint, NC>& coords, uint* stack, int stackPos) {
+            for(uint i = 0; i < NC; ++i) {
+                stack[stackPos*NC+i] = coords[i];
+            }
+        }
+
+        inline void _getCoordInStack(std::array<uint, NC>& coords, uint* stack, int stackPos) {
+            for(uint i = 0; i < NC; ++i) {
+                coords[i] = stack[stackPos*NC+i];
+            }
+        }
+
     public:
         Phase(const std::array<Coordinate*, NC>& coords, const std::vector<uint>& allowedMoves) :
             _coords(coords),
@@ -101,45 +115,56 @@ class Phase {
             PhasePruningTupleCleaner<pruning_tuple, pruning_nb-1>::f(_pruning);
         }
 
-        uint solve(const std::array<uint, NC>& coords, uint* solution) {
-            uint bound = _estimateCost(coords);
+        uint solve(const std::array<uint, NC>& coords, int* solution, int stackPos = 0, uint currentBound = 0) {
             bool found = false;
-            while(!found) {
-                bound = search(coords, 0, bound, found, solution);
+            uint nextBound = currentBound ? currentBound : _estimateCost(coords);
+            std::array<uint, NC> currentCoords = coords;
+
+            uint coordStack[NC*30]; //FIXME
+            for(int i = 0; i < stackPos; ++i) {
+                _saveCoordToStack(currentCoords, coordStack, i);
+                _applyMove(currentCoords, currentCoords, _allowedMoves[solution[i]]);
             }
-            return bound;
+            _saveCoordToStack(currentCoords, coordStack, stackPos);
+
+            while(!found) {
+                uint bound = nextBound;
+                nextBound = std::numeric_limits<uint>::max();
+                stackPos = std::max(0, stackPos);
+                do {
+                    _getCoordInStack(currentCoords, coordStack, stackPos);
+                    uint finalCostLow = stackPos + _estimateCost(currentCoords);
+                    if(finalCostLow > bound) {
+                        nextBound = std::min(finalCostLow, nextBound);
+                        solution[stackPos] = -1;
+                        --stackPos;
+                        continue;
+                    }
+                    if(finalCostLow == stackPos) {
+                        found = true;
+                        break;
+                    }
+                    if(solution[stackPos]+1 == _allowedMoves.size()) {
+                        solution[stackPos] = -1;
+                        --stackPos;
+                        continue;
+                    }
+                    ++solution[stackPos];
+                    if(_isMoveDisallowed(solution[stackPos], solution, stackPos)) {
+                        continue;
+                    }
+                    _applyMove(currentCoords, currentCoords, _allowedMoves[solution[stackPos]]);
+                    ++stackPos;
+                    _saveCoordToStack(currentCoords, coordStack, stackPos);
+                } while(stackPos >= 0);
+            }
+            return stackPos;
         }
 
-        uint search(const std::array<uint, NC>& coords, uint cost, uint bound, bool& found, uint* solution) {
-            uint finalCostLow = cost + _estimateCost(coords);
-            if(finalCostLow == cost) {
-                found = true;
-                return cost;
+        void convertSolutionToMoves(int* solution, uint length) {
+            for(uint i = 0; i < length; ++i) {
+                solution[i] = _allowedMoves[solution[i]];
             }
-
-            if(finalCostLow > bound) {
-                found = false;
-                return finalCostLow;
-            }
-
-            uint min = std::numeric_limits<uint>::max();
-            bool newFound;
-            std::array<uint, NC> newCoords;
-            for(uint i : _allowedMoves) {
-                if(_isMoveDisallowed(i, solution, cost)) {
-                    continue;
-                }
-                solution[cost] = i;
-                _applyMove(coords, newCoords, i);
-                uint totalCost = search(newCoords, cost + 1, bound, newFound, solution);
-                if(newFound) {
-                    found = true;
-                    return totalCost;
-                }
-                min = std::min(totalCost, min);
-            }
-            found = false;
-            return min;
         }
 };
 
