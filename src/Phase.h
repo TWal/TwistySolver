@@ -7,6 +7,7 @@
 #include <limits>
 #include "types.h"
 #include <algorithm>
+#include "PhaseStack.h"
 
 template<unsigned int ... D>
 struct PhaseList {
@@ -72,12 +73,6 @@ class Phase {
         pruning_tuple _pruning;
         std::vector<uint> _allowedMoves;
 
-        //TODO: The whole class is generic, but this method is not
-        inline bool _isMoveDisallowed(int move, int* solution, int depth) {
-            move = _allowedMoves[move];
-            return (depth != 0) && (((move/3) == (_allowedMoves[solution[depth-1]]/3)) || ((move/3)+3 == (_allowedMoves[solution[depth-1]]/3)));
-        }
-
         template<unsigned int N> uint _pruningTableLookup(const std::array<uint, NC>& state) {
             return std::get<N>(_pruning)->lookup(PhaseDataExtractor<N, D ...>::template f<uint, NC>(state));
         }
@@ -92,18 +87,6 @@ class Phase {
             }
         }
 
-        inline void _saveCoordToStack(const std::array<uint, NC>& coords, uint* stack, int stackPos) {
-            for(uint i = 0; i < NC; ++i) {
-                stack[stackPos*NC+i] = coords[i];
-            }
-        }
-
-        inline void _getCoordInStack(std::array<uint, NC>& coords, uint* stack, int stackPos) {
-            for(uint i = 0; i < NC; ++i) {
-                coords[i] = stack[stackPos*NC+i];
-            }
-        }
-
     public:
         Phase(const std::array<Coordinate*, NC>& coords, const std::vector<uint>& allowedMoves) :
             _coords(coords),
@@ -115,50 +98,42 @@ class Phase {
             PhasePruningTupleCleaner<pruning_tuple, pruning_nb-1>::f(_pruning);
         }
 
-        uint solve(const std::array<uint, NC>& coords, int* solution, int stackPos = 0, uint currentBound = 0) {
+        uint solve(const std::array<uint, NC>& coords, int* solution) {
             bool found = false;
-            uint nextBound = currentBound ? currentBound : _estimateCost(coords);
-            std::array<uint, NC> currentCoords = coords;
-
-            uint coordStack[NC*30]; //FIXME
-            for(int i = 0; i < stackPos; ++i) {
-                _saveCoordToStack(currentCoords, coordStack, i);
-                _applyMove(currentCoords, currentCoords, _allowedMoves[solution[i]]);
-            }
-            _saveCoordToStack(currentCoords, coordStack, stackPos);
+            uint nextBound = _estimateCost(coords);
+            PhaseStack<NC> stack(_coords, _allowedMoves, coords);
 
             while(!found) {
                 uint bound = nextBound;
                 nextBound = std::numeric_limits<uint>::max();
-                stackPos = std::max(0, stackPos);
+                stack.setBound(bound);
+                stack.setCost(0);
                 do {
-                    _getCoordInStack(currentCoords, coordStack, stackPos);
-                    uint finalCostLow = stackPos + _estimateCost(currentCoords);
+                    uint finalCostLow = stack.getCost() + _estimateCost(stack.getCoord());
                     if(finalCostLow > bound) {
                         nextBound = std::min(finalCostLow, nextBound);
-                        solution[stackPos] = -1;
-                        --stackPos;
+                        stack.backtrack();
                         continue;
                     }
-                    if(finalCostLow == stackPos) {
+                    if(finalCostLow == stack.getCost()) {
                         found = true;
                         break;
                     }
-                    if(solution[stackPos]+1 == _allowedMoves.size()) {
-                        solution[stackPos] = -1;
-                        --stackPos;
+                    if(stack.getMove()+1 == _allowedMoves.size()) {
+                        stack.backtrack();
                         continue;
                     }
-                    ++solution[stackPos];
-                    if(_isMoveDisallowed(solution[stackPos], solution, stackPos)) {
+
+                    stack.setMove(stack.getMove()+1);
+                    if(stack.isMoveDisallowed()) {
                         continue;
                     }
-                    _applyMove(currentCoords, currentCoords, _allowedMoves[solution[stackPos]]);
-                    ++stackPos;
-                    _saveCoordToStack(currentCoords, coordStack, stackPos);
-                } while(stackPos >= 0);
+                    stack.advance();
+                } while(!stack.isEmpty());
             }
-            return stackPos;
+
+            stack.copySolution(solution);
+            return stack.getCost();
         }
 
         void convertSolutionToMoves(int* solution, uint length) {
