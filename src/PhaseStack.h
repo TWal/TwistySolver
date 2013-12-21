@@ -9,13 +9,16 @@
 template<unsigned int NC>
 class PhaseStack {
     public:
-        PhaseStack(const std::array<Coordinate*, NC>& coords, const std::vector<uint>& allowedMoves, const std::array<uint, NC>& firstCoord) :
+        PhaseStack(const std::array<Coordinate*, NC>& coords, const std::vector<uint>& allowedMoves) :
             _moveStack(32, -1),
             _coordStack(33),
             _pos(0),
             _coords(coords),
             _allowedMoves(allowedMoves) {
-            _coordStack[0] = firstCoord;
+        }
+
+        inline void setFirstCoord(const std::array<uint, NC>& coords) {
+            _coordStack[0] = coords;
         }
 
         inline void advance() {
@@ -60,7 +63,7 @@ class PhaseStack {
             return _pos < 0;
         }
 
-        inline void setBound(uint bound) {
+        inline void setBound(int bound) {
             _moveStack.resize(bound, -1);
             _coordStack.resize(bound+1);
         }

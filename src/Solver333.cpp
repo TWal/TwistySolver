@@ -61,16 +61,13 @@ std::vector<uint> Solver333::solve(const Cube& cube) {
     uint udslice = _udslice.fromCube(cube);
     int solution1[30];
     int solution2[30];
-    for(int i = 0; i < 30; ++i) {
-        solution1[i] = -1;
-        solution2[i] = -1;
-    }
 
-    uint length = _phase1.solve({{udslice, co, eo}}, solution1);
+    _phase1.prepareSolve({{udslice, co, eo}});
+    int length = _phase1.solve(solution1, 0, std::numeric_limits<int>::max());
     _phase1.convertSolutionToMoves(solution1, length);
 
     Cube cube2 = cube;
-    for(uint i = 0; i < length; ++i) {
+    for(int i = 0; i < length; ++i) {
         for(int j = 0; j <= solution1[i]%3; ++j) {
             cube2.applyMult(Cube((AXIS)(solution1[i]/3)));
         }
@@ -81,7 +78,8 @@ std::vector<uint> Solver333::solve(const Cube& cube) {
     uint cp = _cp.fromCube(cube2);
     uint udslicep = _udslicep.fromCube(cube2);
 
-    length = _phase2.solve({{udslicep, cp, ep}}, solution2);
+    _phase2.prepareSolve({{udslicep, cp, ep}});
+    length = _phase2.solve(solution2, 0, std::numeric_limits<int>::max());
     _phase2.convertSolutionToMoves(solution2, length);
 
     solution.insert(solution.end(), solution2, &solution2[length]);

@@ -72,6 +72,10 @@ class Phase {
         std::array<Coordinate*, NC> _coords;
         pruning_tuple _pruning;
         std::vector<uint> _allowedMoves;
+        PhaseStack<NC> _stack;
+        int _bound;
+        int _nextBound;
+        bool _shouldSkipFirstSolution;
 
         template<unsigned int N> uint _pruningTableLookup(const std::array<uint, NC>& state) {
             return std::get<N>(_pruning)->lookup(PhaseDataExtractor<N, D ...>::template f<uint, NC>(state));
@@ -91,53 +95,70 @@ class Phase {
         Phase(const std::array<Coordinate*, NC>& coords, const std::vector<uint>& allowedMoves) :
             _coords(coords),
             _pruning(new PruningTable<PhaseDataEntryExtractor<D>::size>(PhaseDataEntryExtractor<D>::template f<Coordinate*, NC>(_coords), allowedMoves) ...),
-            _allowedMoves(allowedMoves) {
+            _allowedMoves(allowedMoves),
+            _stack(_coords, _allowedMoves) {
         }
 
         ~Phase() {
             PhasePruningTupleCleaner<pruning_tuple, pruning_nb-1>::f(_pruning);
         }
 
-        uint solve(const std::array<uint, NC>& coords, int* solution) {
-            bool found = false;
-            uint nextBound = _estimateCost(coords);
-            PhaseStack<NC> stack(_coords, _allowedMoves, coords);
-
-            while(!found) {
-                uint bound = nextBound;
-                nextBound = std::numeric_limits<uint>::max();
-                stack.setBound(bound);
-                stack.setCost(0);
-                do {
-                    uint finalCostLow = stack.getCost() + _estimateCost(stack.getCoord());
-                    if(finalCostLow > bound) {
-                        nextBound = std::min(finalCostLow, nextBound);
-                        stack.backtrack();
-                        continue;
-                    }
-                    if(finalCostLow == stack.getCost()) {
-                        found = true;
-                        break;
-                    }
-                    if(stack.getMove()+1 == _allowedMoves.size()) {
-                        stack.backtrack();
-                        continue;
-                    }
-
-                    stack.setMove(stack.getMove()+1);
-                    if(stack.isMoveDisallowed()) {
-                        continue;
-                    }
-                    stack.advance();
-                } while(!stack.isEmpty());
-            }
-
-            stack.copySolution(solution);
-            return stack.getCost();
+        void prepareSolve(const std::array<uint, NC>& coords) {
+            _stack.setFirstCoord(coords);
+            _bound = _estimateCost(coords);
+            _nextBound = std::numeric_limits<int>::max();
+            _shouldSkipFirstSolution = false;
         }
 
-        void convertSolutionToMoves(int* solution, uint length) {
-            for(uint i = 0; i < length; ++i) {
+        int solve(int* solution, int totalCost, int totalBound) {
+            int superBound = totalBound - totalCost;
+
+            bool solutionAllowed = !_shouldSkipFirstSolution;
+            _shouldSkipFirstSolution = true;
+            bool found = false;
+            while(!found) {
+                _stack.setBound(_bound);
+                do {
+                    int finalCostLow = _stack.getCost() + _estimateCost(_stack.getCoord());
+                    if(finalCostLow > _bound) {
+                        _nextBound = std::min(finalCostLow, _nextBound);
+                        _stack.backtrack();
+                        continue;
+                    }
+                    if(finalCostLow == _stack.getCost() && finalCostLow == _bound) {
+                        if(solutionAllowed) {
+                            found = true;
+                        }
+                        solutionAllowed = true;
+                        break;
+                    }
+                    if(_stack.getMove()+1 == _allowedMoves.size()) {
+                        _stack.backtrack();
+                        continue;
+                    }
+
+                    _stack.setMove(_stack.getMove()+1);
+                    if(_stack.isMoveDisallowed()) {
+                        continue;
+                    }
+                    _stack.advance();
+                } while(!_stack.isEmpty());
+                if(_nextBound > superBound) {
+                    return -1; //Solution not found
+                }
+                if(!found) {
+                    _stack.setCost(0);
+                    _bound = _nextBound;
+                    _nextBound = std::numeric_limits<int>::max();
+                }
+            }
+
+            _stack.copySolution(solution);
+            return _stack.getCost();
+        }
+
+        void convertSolutionToMoves(int* solution, int length) {
+            for(int i = 0; i < length; ++i) {
                 solution[i] = _allowedMoves[solution[i]];
             }
         }
