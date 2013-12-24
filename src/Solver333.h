@@ -12,7 +12,7 @@ class Solver333 {
     public:
         Solver333();
         ~Solver333();
-        std::vector<uint> solve(const Cube& cube);
+        void solve(const Cube& cube, const std::function<bool (const std::vector<uint>&)>& callback);
     private:
         OrientationCoordinate _eo;
         OrientationCoordinate _co;

@@ -68,9 +68,10 @@ class PhaseStack {
             _coordStack.resize(bound+1);
         }
 
-        inline void copySolution(int* solution) const {
+        inline void copySolution(std::vector<uint>& solution) const {
+            solution.clear();
             for(int i = 0; i < _pos; ++i) {
-                solution[i] = _moveStack[i];
+                solution.push_back(_moveStack[i]);
             }
         }
 

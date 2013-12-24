@@ -55,34 +55,40 @@ Solver333::Solver333() :
 Solver333::~Solver333() {
 }
 
-std::vector<uint> Solver333::solve(const Cube& cube) {
-    uint eo = _eo.fromCube(cube);
-    uint co = _co.fromCube(cube);
-    uint udslice = _udslice.fromCube(cube);
-    int solution1[30];
-    int solution2[30];
+void Solver333::solve(const Cube& cube, const std::function<bool (const std::vector<uint>&)>& callback) {
+    std::vector<uint> solution1;
+    std::vector<uint> solution2;
+    std::vector<uint> solution;
+    int bound = std::numeric_limits<int>::max();
 
-    _phase1.prepareSolve({{udslice, co, eo}});
-    int length = _phase1.solve(solution1, 0, std::numeric_limits<int>::max());
-    _phase1.convertSolutionToMoves(solution1, length);
+    _phase1.prepareSolve(cube);
 
-    Cube cube2 = cube;
-    for(int i = 0; i < length; ++i) {
-        for(int j = 0; j <= solution1[i]%3; ++j) {
-            cube2.applyMult(Cube((AXIS)(solution1[i]/3)));
+    do {
+        solution.clear();
+        int length2 = -1;
+        while(length2 == -1) {
+            int length = _phase1.solve(solution1, 0, bound);
+            if(length == -1) {
+                return;
+            }
+            _phase1.convertSolutionToMoves(solution1);
+
+            Cube cube2 = cube;
+            for(int i = 0; i < length; ++i) {
+                for(int j = 0; j <= solution1[i]%3; ++j) {
+                    cube2.applyMult(Cube((AXIS)(solution1[i]/3)));
+                }
+            }
+            solution.assign(solution1.begin(), solution1.end());
+
+            _phase2.prepareSolve(cube2);
+            length2 = _phase2.solve(solution2, length, bound);
+            if(length2 != -1) {
+                _phase2.convertSolutionToMoves(solution2);
+                solution.insert(solution.end(), solution2.begin(), solution2.end());
+            }
         }
-    }
-    std::vector<uint> solution(solution1, &solution1[length]);
-
-    uint ep = _ep.fromCube(cube2);
-    uint cp = _cp.fromCube(cube2);
-    uint udslicep = _udslicep.fromCube(cube2);
-
-    _phase2.prepareSolve({{udslicep, cp, ep}});
-    length = _phase2.solve(solution2, 0, std::numeric_limits<int>::max());
-    _phase2.convertSolutionToMoves(solution2, length);
-
-    solution.insert(solution.end(), solution2, &solution2[length]);
-    return solution;
+        bound = solution.size() - 1;
+    } while(callback(solution));
 }
 

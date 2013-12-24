@@ -103,14 +103,19 @@ class Phase {
             PhasePruningTupleCleaner<pruning_tuple, pruning_nb-1>::f(_pruning);
         }
 
-        void prepareSolve(const std::array<uint, NC>& coords) {
+        void prepareSolve(const Cube& cube) {
+            std::array<uint, NC> coords;
+            for(uint i = 0; i < NC; ++i) {
+                coords[i] = _coords[i]->fromCube(cube);
+            }
             _stack.setFirstCoord(coords);
+            _stack.setCost(0);
             _bound = _estimateCost(coords);
             _nextBound = std::numeric_limits<int>::max();
             _shouldSkipFirstSolution = false;
         }
 
-        int solve(int* solution, int totalCost, int totalBound) {
+        int solve(std::vector<uint>& solution, int totalCost, int totalBound) {
             int superBound = totalBound - totalCost;
 
             bool solutionAllowed = !_shouldSkipFirstSolution;
@@ -128,9 +133,9 @@ class Phase {
                     if(finalCostLow == _stack.getCost() && finalCostLow == _bound) {
                         if(solutionAllowed) {
                             found = true;
+                            break;
                         }
                         solutionAllowed = true;
-                        break;
                     }
                     if(_stack.getMove()+1 == _allowedMoves.size()) {
                         _stack.backtrack();
@@ -157,9 +162,9 @@ class Phase {
             return _stack.getCost();
         }
 
-        void convertSolutionToMoves(int* solution, int length) {
-            for(int i = 0; i < length; ++i) {
-                solution[i] = _allowedMoves[solution[i]];
+        void convertSolutionToMoves(std::vector<uint>& solution) {
+            for(uint& move : solution) {
+                move = _allowedMoves[move];
             }
         }
 };

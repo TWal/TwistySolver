@@ -40,7 +40,7 @@ void printSolution(const std::vector<uint>& solution) {
         }
         printf(" ");
     }
-    printf("\n");
+    printf(" (%zd)\n", solution.size());
 }
 
 int main(int argc, char** argv) {
@@ -55,9 +55,10 @@ int main(int argc, char** argv) {
         cube = Parser333::parseArgs(argc, argv);
     }
 
-
-    std::vector<uint> solution = solver.solve(cube);
-    printSolution(solution);
+    solver.solve(cube, [](const std::vector<uint>& solution) {
+        printSolution(solution);
+        return true;
+    });
 
     return 0;
 }

@@ -16,19 +16,33 @@ TEST(Solver, Solve) {
     Cube cube;
     std::vector<uint> solution;
 
+    int nbTest = 2;
+
+    auto testLambda = [&](const std::vector<uint>& solution) {
+        Cube cube2 = cube;
+        for(uint i : solution) {
+            for(uint j = 0; j <= i%3; ++j) {
+                cube2.applyMult(Cube((AXIS)(i/3)));
+            }
+        }
+        EXPECT_ID(cube2);
+        --nbTest;
+        return nbTest == 0;
+    };
+
+    auto cleanupLambda = [&]() {
+        nbTest = 2;
+        cube = Cube();
+    };
+
     for(int i = 0; i < 11; ++i) {
         cube.applyMult(Cube(R));
         cube.applyMult(Cube(B));
         cube.applyMult(Cube(L));
         cube.applyMult(Cube(F));
     }
-    solution = solver.solve(cube);
-    for(uint i : solution) {
-        for(uint j = 0; j <= i%3; ++j) {
-            cube.applyMult(Cube((AXIS)(i/3)));
-        }
-    }
-    EXPECT_ID(cube);
+    solver.solve(cube, testLambda);
+    cleanupLambda();
 
     for(int i = 0; i < 11; ++i) {
         cube.applyMult(Cube(R));
@@ -38,14 +52,11 @@ TEST(Solver, Solve) {
         cube.applyMult(Cube(F));
         cube.applyMult(Cube(D));
     }
-    solution = solver.solve(cube);
-    for(uint i : solution) {
-        for(uint j = 0; j <= i%3; ++j) {
-            cube.applyMult(Cube((AXIS)(i/3)));
-        }
-    }
-    EXPECT_ID(cube);
+    solver.solve(cube, testLambda);
+    cleanupLambda();
 
-    solution = solver.solve(cube);
-    EXPECT_EQ(solution.size(), 0);
+    solver.solve(cube, [](const std::vector<uint>& solution) {
+        EXPECT_EQ(solution.size(), 0);
+        return true;
+    });
 }
