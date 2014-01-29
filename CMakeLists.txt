@@ -6,6 +6,8 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 set(${PROJECT_NAME}_SOURCES
+    src/EdgePiece.cpp
+    src/CornerPiece.cpp
     src/Cube.cpp
     src/Coordinate.cpp
     src/OrientationCoordinate.cpp
