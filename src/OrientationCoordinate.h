@@ -6,6 +6,7 @@
 class OrientationCoordinate : public Coordinate {
     public:
         OrientationCoordinate(uint nb, uint base, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm);
+        OrientationCoordinate(uint nb, uint base, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm);
         virtual ~OrientationCoordinate();
         virtual uint fromCube(const Cube& cube) const;
         virtual Cube toCube(uint coord) const;

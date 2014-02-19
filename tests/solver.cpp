@@ -22,12 +22,12 @@ TEST(Solver, Solve) {
         Cube cube2 = cube;
         for(uint i : solution) {
             for(uint j = 0; j <= i%3; ++j) {
-                cube2.applyMult(Cube((AXIS)(i/3)));
+                cube2.applyMult(Cube(3, (AXIS)(i/3), 1));
             }
         }
         EXPECT_ID(cube2);
         --nbTest;
-        return nbTest == 0;
+        return nbTest != 0;
     };
 
     auto cleanupLambda = [&]() {
@@ -36,21 +36,21 @@ TEST(Solver, Solve) {
     };
 
     for(int i = 0; i < 11; ++i) {
-        cube.applyMult(Cube(R));
-        cube.applyMult(Cube(B));
-        cube.applyMult(Cube(L));
-        cube.applyMult(Cube(F));
+        cube.applyMult(Cube(3, R, 1));
+        cube.applyMult(Cube(3, B, 1));
+        cube.applyMult(Cube(3, L, 1));
+        cube.applyMult(Cube(3, F, 1));
     }
     solver.solve(cube, testLambda);
     cleanupLambda();
 
     for(int i = 0; i < 11; ++i) {
-        cube.applyMult(Cube(R));
-        cube.applyMult(Cube(B));
-        cube.applyMult(Cube(U));
-        cube.applyMult(Cube(L));
-        cube.applyMult(Cube(F));
-        cube.applyMult(Cube(D));
+        cube.applyMult(Cube(3, R, 1));
+        cube.applyMult(Cube(3, B, 1));
+        cube.applyMult(Cube(3, U, 1));
+        cube.applyMult(Cube(3, L, 1));
+        cube.applyMult(Cube(3, F, 1));
+        cube.applyMult(Cube(3, D, 1));
     }
     solver.solve(cube, testLambda);
     cleanupLambda();

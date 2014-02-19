@@ -8,6 +8,8 @@
         EXPECT_EQ(array1[i], array2[i]); \
     }
 
+static const std::vector<uint> allowedMoves = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
+
 TEST(Coordinate, OrientationFunc) {
     char arrtmp[8];
     unsigned int n;
@@ -69,17 +71,19 @@ TEST(Coordinate, PositionFunc) {
 TEST(Coordinate, OrientationMoveTable) {
     OrientationCoordinate oc(8, 3, [](const char* orient) {
         char nothing[12] = {0};
-        return Cube(nothing, nothing, orient, nothing);
+        return Cube(3, nothing, nothing, orient, nothing);
     }, [](const Cube& cube, char* orient) {
         memcpy(orient, cube.getCornerOri(), 8);
     });
+    oc.buildMoveTable(allowedMoves, CubeProperties(3));
 
     OrientationCoordinate oc2(12, 2, [](const char* orient) {
         char nothing[12] = {0};
-        return Cube(nothing, nothing, nothing, orient);
+        return Cube(3, nothing, nothing, nothing, orient);
     }, [](const Cube& cube, char* orient) {
         memcpy(orient, cube.getEdgeOri(), 12);
     });
+    oc2.buildMoveTable(allowedMoves, CubeProperties(3));
 
     uint c = 0;
     uint c2 = 0;
@@ -110,10 +114,12 @@ TEST(Coordinate, OrientationMoveTable) {
 TEST(Coordinate, PermutationMoveTable) {
     PermutationCoordinate pc(8, [](const char* perm) {
         char nothing[12] = {0};
-        return Cube(perm, nothing, nothing, nothing);
+        return Cube(3, perm, nothing, nothing, nothing);
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, cube.getCornerPerm(), 8);
     });
+
+    pc.buildMoveTable(allowedMoves, CubeProperties(3));
 
     uint c = 0;
     for(int i = 0; i < 6; ++i) {
@@ -130,10 +136,12 @@ TEST(Coordinate, PermutationMoveTable) {
 TEST(Coordinate, PositionMoveTable) {
     PositionCoordinate poc(12, {FL, FR, BR, BL}, [](const char* perm) {
         char nothing[12] = {0};
-        return Cube(nothing, perm, nothing, nothing);
+        return Cube(3, nothing, perm, nothing, nothing);
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, cube.getEdgePerm(), 12);
     });
+
+    poc.buildMoveTable(allowedMoves, CubeProperties(3));
 
     Cube cube;
     uint id = poc.fromCube(cube);

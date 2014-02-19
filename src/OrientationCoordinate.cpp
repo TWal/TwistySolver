@@ -8,8 +8,11 @@ OrientationCoordinate::OrientationCoordinate(uint nb, uint base, std::function<C
     _permToCube(permToCube),
     _cubeToPerm(cubeToPerm),
     _tempOrient(new char[_nb]) {
+}
 
-    _init();
+OrientationCoordinate::OrientationCoordinate(uint nb, uint base, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm) :
+    OrientationCoordinate(nb, base, permToCube, cubeToPerm) {
+    buildMoveTable(allowedMoves, props);
 }
 
 OrientationCoordinate::~OrientationCoordinate() {

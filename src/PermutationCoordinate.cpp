@@ -7,8 +7,11 @@ PermutationCoordinate::PermutationCoordinate(uint nb, std::function<Cube (const 
     _permToCube(permToCube),
     _cubeToPerm(cubeToPerm),
     _tempPerm(new char[_nb]) {
+}
 
-    _init();
+PermutationCoordinate::PermutationCoordinate(uint nb, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm) :
+    PermutationCoordinate(nb, permToCube, cubeToPerm) {
+    buildMoveTable(allowedMoves, props);
 }
 
 PermutationCoordinate::~PermutationCoordinate() {

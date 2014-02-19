@@ -8,8 +8,9 @@
 class Cube {
     public:
         Cube();
-        Cube(const char* cp, const char* ep, const char* co, const char* eo);
-        Cube(AXIS axis);
+        Cube(uint size);
+        Cube(uint size, const char* cp, const char* ep, const char* co, const char* eo);
+        Cube(uint size, AXIS axis, uint layer);
 
         void mult(const Cube& rhs, Cube& out) const;
         void applyMult(const Cube& rhs);

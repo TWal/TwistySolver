@@ -3,12 +3,15 @@
 Cube::Cube() {
 }
 
-Cube::Cube(const char* cp, const char* ep, const char* co, const char* eo) :
+Cube::Cube(uint size) {
+}
+
+Cube::Cube(uint size, const char* cp, const char* ep, const char* co, const char* eo) :
     _corners(cp, co),
     _edges(ep, eo) {
 }
 
-Cube::Cube(AXIS axis) :
+Cube::Cube(uint size, AXIS axis, uint layer) :
     _corners(axis),
     _edges(axis) {
 }

@@ -1,14 +1,16 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(TwistySolver)
-SET(CMAKE_CXX_FLAGS "-g -Wall -pedantic -std=c++11")
+SET(CMAKE_CXX_FLAGS "-g -O3 -Wall -pedantic -std=c++11")
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 SET(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 set(${PROJECT_NAME}_SOURCES
-    src/EdgePiece.cpp
+    src/CenterPiece.cpp
     src/CornerPiece.cpp
+    src/EdgePiece.cpp
     src/Cube.cpp
+    src/CubeProperties.cpp
     src/Coordinate.cpp
     src/OrientationCoordinate.cpp
     src/PermutationCoordinate.cpp

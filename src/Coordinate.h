@@ -2,28 +2,34 @@
 #define COORDINATE_H
 
 #include <functional>
+#include <vector>
 #include "Cube.h"
 #include "types.h"
+#include "CubeProperties.h"
 
 class Coordinate {
     public:
         Coordinate(uint size);
         virtual ~Coordinate();
-        inline uint moveTableLookup(uint current, AXIS axis, uint nb) const {
-            return _moveTable[current*6*3 + (uint)axis*3 + nb - 1];
-        }
+        void buildMoveTable(const std::vector<uint>& allowedMoves, const CubeProperties& props);
+
         inline uint moveTableLookup(uint current, uint move) const {
-            return _moveTable[current*6*3 + move];
+            return _moveTable[current*_nbMove + _transposedMoves[move]];
+        }
+        inline uint moveTableLookup(uint current, AXIS axis, uint nb) const {
+            return moveTableLookup(current, (uint)axis*3 + nb - 1);
         }
         inline uint size() const {
             return _size;
         }
         virtual uint fromCube(const Cube& cube) const = 0;
         virtual Cube toCube(uint coord) const = 0;
+
     protected:
-        void _init();
         uint _size;
         uint* _moveTable;
+        uint _nbMove;
+        std::vector<uint> _transposedMoves;
 };
 
 #endif

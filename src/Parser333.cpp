@@ -77,7 +77,7 @@ Cube Parser333::parse(const std::vector<std::string>& strings) {
         eori.push_back(getEdgeOrient(faces, (EDGES)i));
     }
 
-    return Cube(cperm.data(), eperm.data(), cori.data(), eori.data());
+    return Cube(3, cperm.data(), eperm.data(), cori.data(), eori.data());
 }
 
 void Parser333::colorToFace(const std::vector<std::string>& colors, std::vector<AXIS>& faces) {

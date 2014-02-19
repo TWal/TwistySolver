@@ -1,25 +1,36 @@
 #include "Coordinate.h"
+#include "Utils.h"
+#include <algorithm>
 
-Coordinate::Coordinate(uint size) : _size(size), _moveTable(nullptr) {
+Coordinate::Coordinate(uint size) :
+    _size(size),
+    _moveTable(nullptr) {
 }
 
 Coordinate::~Coordinate() {
     delete _moveTable;
 }
 
-//We cannot call virtual functions in the base class constructor, so this is a little hack to avoid this (it is called in the derived class constructor, when the vtable is ready).
-void Coordinate::_init() {
-    _moveTable = new uint[_size * 6 * 3];
+void Coordinate::buildMoveTable(const std::vector<uint>& allowedMoves, const CubeProperties& props) {
+    _nbMove = allowedMoves.size();
+    _moveTable = new uint[_size * _nbMove];
+    _transposedMoves.assign(*std::max_element(allowedMoves.begin(), allowedMoves.end()) + 1,  -1);
+    for(uint i = 0; i < _nbMove; ++i) {
+        _transposedMoves[allowedMoves[i]] = i;
+    }
 
     for(uint i = 0; i < _size; ++i) {
         Cube c = toCube(i);
-        for(uint j = 0; j < 6; ++j) {
-            Cube move = Cube((AXIS)j);
-            c.applyMult(move);
-            for(uint k = 0; k < 3; ++k) {
-                _moveTable[i*6*3 + j*3 + k] = fromCube(c);
-                c.applyMult(move);
+        for(uint move : allowedMoves) {
+            uint layer = Utils::getLayer(move);
+            uint axis = Utils::getAxis(move);
+            uint nb = Utils::getNb(move);
+            Cube cubeMove = props.makeCube((AXIS)axis, layer);
+            Cube c2 = c;
+            for(uint i = 0; i <= nb; ++i) {
+                c2.applyMult(cubeMove);
             }
+            _moveTable[i*_nbMove + _transposedMoves[move]] = fromCube(c2);
         }
     }
 }
