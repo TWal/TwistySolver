@@ -11,8 +11,11 @@ class NEdgePiece {
 
         void mult(const NEdgePiece& rhs, NEdgePiece& out) const;
 
-        const char* getOri() const;
+        void makeIdentity();
+
         const char* getPerm() const;
+
+        void setPerm(const char* perm);
 
         static const char permMove[2][6][24];
     private:

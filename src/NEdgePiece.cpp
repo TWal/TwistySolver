@@ -33,6 +33,10 @@ NEdgePiece::NEdgePiece(const char* perm) {
 }
 
 NEdgePiece::NEdgePiece(AXIS axis, uint layer, uint pos) {
+    for(int i = 0; i < 24; ++i) {
+        _perm[i] = -1;
+    }
+
     for(int i = 0; i < (layer >= pos ? 2 : 1); ++i) {
         for(int j = 0; j < 24; ++j) {
             if(permMove[i][(int)axis][j] != -1) {
@@ -40,6 +44,7 @@ NEdgePiece::NEdgePiece(AXIS axis, uint layer, uint pos) {
             }
         }
     }
+
     for(int i = 0; i < 24; ++i) {
         if(_perm[i] == -1) {
             _perm[i] = i;
@@ -52,5 +57,19 @@ void NEdgePiece::mult(const NEdgePiece& rhs, NEdgePiece& out) const {
     for(uint i = 0; i < 24; ++i) {
         out._perm[i] = _perm[(uint)rhs._perm[i]];
     }
+}
+
+void NEdgePiece::makeIdentity() {
+    for(int i = 0; i < 24; ++i) {
+        _perm[i] = i;
+    }
+}
+
+const char* NEdgePiece::getPerm() const {
+    return _perm;
+}
+
+void NEdgePiece::setPerm(const char* perm) {
+    memcpy(_perm, perm, 24);
 }
 

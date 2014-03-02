@@ -44,11 +44,26 @@ void CornerPiece::mult(const CornerPiece& rhs, CornerPiece& out) const {
     }
 }
 
+void CornerPiece::makeIdentity() {
+    for(int i = 0; i < 8; ++i) {
+        _perm[i] = i;
+        _ori[i] = 0;
+    }
+}
+
 const char* CornerPiece::getOri() const {
     return _ori;
 }
 
 const char* CornerPiece::getPerm() const {
     return _perm;
+}
+
+void CornerPiece::setPerm(const char* perm) {
+    memcpy(_perm, perm, 8);
+}
+
+void CornerPiece::setOri(const char* ori) {
+    memcpy(_ori, ori, 8);
 }
 

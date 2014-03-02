@@ -45,11 +45,26 @@ void EdgePiece::mult(const EdgePiece& rhs, EdgePiece& out) const {
     }
 }
 
+void EdgePiece::makeIdentity() {
+    for(int i = 0; i < 12; ++i) {
+        _perm[i] = i;
+        _ori[i] = 0;
+    }
+}
+
 const char* EdgePiece::getOri() const {
     return _ori;
 }
 
 const char* EdgePiece::getPerm() const {
     return _perm;
+}
+
+void EdgePiece::setPerm(const char* perm) {
+    memcpy(_perm, perm, 12);
+}
+
+void EdgePiece::setOri(const char* ori) {
+    memcpy(_ori, ori, 12);
 }
 

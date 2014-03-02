@@ -12,7 +12,7 @@ class PruningTable {
         char* _pruningTable;
         std::array<Coordinate*, N> _coords;
     public:
-        PruningTable(const std::array<Coordinate*, N>& coords, const std::vector<uint>& allowedMoves) :
+        PruningTable(const std::array<Coordinate*, N>& coords, const std::vector<uint>& allowedMoves, const Cube& identity) :
             _pruningTable(nullptr),
             _coords(coords) {
 
@@ -24,7 +24,6 @@ class PruningTable {
 
             memset(_pruningTable, -1, nbEntries);
 
-            Cube identity;
             std::array<uint, N> tmpCoords;
 
             for(uint i = 0; i < N; ++i) {

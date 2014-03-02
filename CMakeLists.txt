@@ -7,6 +7,7 @@ SET(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 set(${PROJECT_NAME}_SOURCES
     src/CenterPiece.cpp
+    src/NEdgePiece.cpp
     src/CornerPiece.cpp
     src/EdgePiece.cpp
     src/Cube.cpp
@@ -17,6 +18,7 @@ set(${PROJECT_NAME}_SOURCES
     src/PositionCoordinate.cpp
     src/Parser333.cpp
     src/Solver333.cpp
+    src/Solver444.cpp
     src/Utils.cpp
 )
 

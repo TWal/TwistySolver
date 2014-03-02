@@ -11,8 +11,13 @@ class CornerPiece {
 
         void mult(const CornerPiece& rhs, CornerPiece& out) const;
 
+        void makeIdentity();
+
         const char* getOri() const;
         const char* getPerm() const;
+
+        void setPerm(const char* perm);
+        void setOri(const char* ori);
 
         static const char permMove[6][8];
         static const char oriMove[6][8];

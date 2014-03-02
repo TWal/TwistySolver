@@ -11,8 +11,13 @@ class EdgePiece {
 
         void mult(const EdgePiece& rhs, EdgePiece& out) const;
 
+        void makeIdentity();
+
         const char* getOri() const;
         const char* getPerm() const;
+
+        void setPerm(const char* perm);
+        void setOri(const char* ori);
 
         static const char permMove[6][12];
         static const char oriMove[6][12];

@@ -12,6 +12,8 @@ class CubeProperties {
             return Cube(_size, args ...);
         }
 
+        Cube identity();
+
     private:
         uint _size;
 };

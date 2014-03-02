@@ -11,8 +11,11 @@ class CenterPiece {
 
         void mult(const CenterPiece& rhs, CenterPiece& out) const;
 
-        const char* getOri() const;
+        void makeIdentity();
+
         const char* getPerm() const;
+
+        void setPerm(const char* perm);
 
         static const char permMove[3][6][24];
     private:
