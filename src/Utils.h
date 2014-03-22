@@ -23,6 +23,33 @@ class Utils {
             return move % 3;
         }
 
+        template<size_t N>
+        static inline void zoom(const std::array<char, N>& pieces, const char* perm, char* out) {
+            //TODO: optimize
+            std::vector<char> reverse(pieces.back()+2, -1);
+            for(uint i = 0; i < N; ++i) {
+                reverse[pieces[i]+1] = i;
+            }
+            const char* reverseData = &reverse[1]; //reverseData[-1] = -1
+            for(uint i = 0; i < N; ++i) {
+                out[i] = reverseData[perm[pieces[i]]];
+            }
+        }
+
+        template<size_t N>
+        static inline void unzoom(uint nPerm, const std::array<char, N>& pieces, const char* in, char* perm) {
+            for(uint i = 0; i < nPerm; ++i) {
+                perm[i] = -1;
+            }
+            for(uint i = 0; i < N; ++i) {
+                if(in[i] == -1) {
+                    perm[pieces[i]] = -1;
+                } else {
+                    perm[pieces[i]] = pieces[in[i]];
+                }
+            }
+        }
+
     private:
         static std::vector<uint> _fac;
         static std::vector<std::vector<uint>> _cnk;

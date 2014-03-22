@@ -92,9 +92,9 @@ class Phase {
         }
 
     public:
-        Phase(const std::array<Coordinate*, NC>& coords, const std::vector<uint>& allowedMoves, const Cube& identity = Cube(3)) :
+        Phase(const std::array<Coordinate*, NC>& coords, const std::vector<uint>& allowedMoves, const Cube& identity = Cube(3), const std::vector<uint>& aimedMoves = {}) :
             _coords(coords),
-            _pruning(new PruningTable<PhaseDataEntryExtractor<D>::size>(PhaseDataEntryExtractor<D>::template f<Coordinate*, NC>(_coords), allowedMoves, identity) ...),
+            _pruning(new PruningTable<PhaseDataEntryExtractor<D>::size>(PhaseDataEntryExtractor<D>::template f<Coordinate*, NC>(_coords), allowedMoves, identity, aimedMoves) ...),
             _allowedMoves(allowedMoves),
             _stack(_coords, _allowedMoves) {
         }

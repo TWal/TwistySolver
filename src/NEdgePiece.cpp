@@ -40,7 +40,7 @@ NEdgePiece::NEdgePiece(AXIS axis, uint layer, uint pos) {
     for(int i = 0; i < (layer >= pos ? 2 : 1); ++i) {
         for(int j = 0; j < 24; ++j) {
             if(permMove[i][(int)axis][j] != -1) {
-                _perm[i] = permMove[i][(int)axis][j];
+                _perm[j] = permMove[i][(int)axis][j];
             }
         }
     }

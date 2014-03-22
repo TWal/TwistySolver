@@ -17,8 +17,13 @@ class Solver444 {
 
     private:
         CubeProperties _props;
-        PositionCoordinate _lCenters;
+        PositionCoordinate _lrCenters1;
+        PositionCoordinate _udCenters2;
+        PositionCoordinate _lrCenters2;
+        PositionCoordinate _edges2;
         Phase<1, PhaseList<0>> _phase1;
+        //Phase<3, PhaseList<2>> _phase2;
+        Phase<3, PhaseList<0, 1>, PhaseList<2>> _phase2;
 };
 
 

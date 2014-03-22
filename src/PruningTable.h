@@ -12,7 +12,7 @@ class PruningTable {
         char* _pruningTable;
         std::array<Coordinate*, N> _coords;
     public:
-        PruningTable(const std::array<Coordinate*, N>& coords, const std::vector<uint>& allowedMoves, const Cube& identity) :
+        PruningTable(const std::array<Coordinate*, N>& coords, const std::vector<uint>& allowedMoves, const Cube& identity, const std::vector<uint>& aimedMoves) :
             _pruningTable(nullptr),
             _coords(coords) {
 
@@ -32,6 +32,41 @@ class PruningTable {
             _pruningTable[makeIndex(tmpCoords)] = 0;
 
             uint done = 1;
+
+            //TODO: Clean redundant code
+            if(!aimedMoves.empty()) {
+                done = 0;
+                bool finished = false;
+                char depth = 0;
+                while(!finished) {
+                    finished = true;
+                    for(uint i = 0; i < nbEntries; ++i) {
+                        if(_pruningTable[i] == depth) {
+                            finished = false;
+                            std::array<uint, N> currentCoords;
+                            unmakeIndex(i, currentCoords);
+                            for(uint j : aimedMoves) {
+                                for(int k = 0; k < N; ++k) {
+                                    tmpCoords[k] = _coords[k]->moveTableLookup(currentCoords[k], j);
+                                }
+                                uint newEntry = makeIndex(tmpCoords);
+                                if(_pruningTable[newEntry] == -1) {
+                                    _pruningTable[newEntry] = depth + 1;
+                                }
+                            }
+                        }
+                    }
+                    ++depth;
+                }
+                for(uint i = 0; i < nbEntries; ++i) {
+                    if(_pruningTable[i] != -1) {
+                        ++done;
+                        _pruningTable[i] = 0;
+                    }
+                }
+            }
+
+
             char depth = 0;
             while(done < nbEntries) {
                 for(uint i = 0; i < nbEntries; ++i) {

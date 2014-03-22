@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
 #else
     Cube cube(4);
     cube.makeIdentity();
-    for(int i = 0; i < 4; ++i) {
+    for(int i = 0; i < 2; ++i) {
         for(int j = 0; j < 6; ++j) {
             cube.applyMult(Cube(4, (AXIS)j, 0));
             cube.applyMult(Cube(4, (AXIS)j, 1));
