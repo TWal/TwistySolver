@@ -56,6 +56,7 @@ Solver333::~Solver333() {
 }
 
 void Solver333::solve(const Cube& cube, const std::function<bool (const std::vector<uint>&)>& callback) {
+    std::unordered_set<uint> phase2MovesSet(phase2AllowedMoves.begin(), phase2AllowedMoves.end());;
     std::vector<uint> solution1;
     std::vector<uint> solution2;
     std::vector<uint> solution;
@@ -72,6 +73,10 @@ void Solver333::solve(const Cube& cube, const std::function<bool (const std::vec
                 return;
             }
             _phase1.convertSolutionToMoves(solution1);
+
+            if(phase2MovesSet.count(solution1.back())) {
+                continue;
+            }
 
             Cube cube2 = cube;
             for(int i = 0; i < length; ++i) {
