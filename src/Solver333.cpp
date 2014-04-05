@@ -13,19 +13,19 @@ Solver333::Solver333(const CubeProperties& props) :
         return _props.makeCube(nothing, nothing, nothing, orient);
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, cube.getEdgeOri(), 12);
-    }),
+    }, "333/1_eo.mvtbl"),
     _co(8, 3, phase1AllowedMoves, _props, [this](const char* orient) {
         char nothing[12] = {0};
         return _props.makeCube(nothing, nothing, orient, nothing);
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, cube.getCornerOri(), 8);
-    }),
+    }, "333/1_co.mvtbl"),
     _udslice(12, {FL, FR, BR, BL}, phase1AllowedMoves, _props, [this](const char* perm) {
         char nothing[12] = {0};
         return _props.makeCube(nothing, perm, nothing, nothing);
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, cube.getEdgePerm(), 12);
-    }),
+    }, "333/1_udslice.mvtbl"),
     _ep(8, phase2AllowedMoves, _props, [this](const char* perm) {
         char nothing[12] = {0};
         char extPerm[12] = {0};
@@ -33,13 +33,13 @@ Solver333::Solver333(const CubeProperties& props) :
         return _props.makeCube(nothing, extPerm, nothing, nothing);
     }, [](const Cube& cube, char* perm) {
         Utils::zoom<8>({{0, 1, 2, 3, 4, 5, 6, 7}}, cube.getEdgePerm(), perm);
-    }),
+    }, "333/2_ep.mvtbl"),
     _cp(8, phase2AllowedMoves, _props, [this](const char* perm) {
         char nothing[12] = {0};
         return _props.makeCube(perm, nothing, nothing, nothing);
     }, [](const Cube& cube, char* perm) {
         memcpy(perm, cube.getCornerPerm(), 8);
-    }),
+    }, "333/2_cp.mvtbl"),
     _udslicep(4, phase2AllowedMoves, _props, [this](const char* perm) {
         char extPerm[12] = {0};
         char nothing[12] = {0};
@@ -47,7 +47,7 @@ Solver333::Solver333(const CubeProperties& props) :
         return _props.makeCube(nothing, extPerm, nothing, nothing);
     }, [](const Cube& cube, char* perm) {
         Utils::zoom<4>({{8, 9, 10, 11}}, cube.getEdgePerm(), perm);
-    }),
+    }, "333/2_udslicep.mvtbl"),
     _phase1({{&_udslice, &_co, &_eo}}, phase1AllowedMoves),
     _phase2({{&_udslicep, &_cp, &_ep}}, phase2AllowedMoves) {
 }

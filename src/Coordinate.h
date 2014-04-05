@@ -11,7 +11,7 @@ class Coordinate {
     public:
         Coordinate(uint size);
         virtual ~Coordinate();
-        void buildMoveTable(const std::vector<uint>& allowedMoves, const CubeProperties& props);
+        void buildMoveTable(const std::vector<uint>& allowedMoves, const CubeProperties& props, const std::string& path = "");
 
         inline uint moveTableLookup(uint current, uint move) const {
             return _moveTable[current*_nbMove + _transposedMoves[move]];

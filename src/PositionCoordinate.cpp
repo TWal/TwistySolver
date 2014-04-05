@@ -10,9 +10,9 @@ PositionCoordinate::PositionCoordinate(uint nb, std::unordered_set<char> pieces,
     _tempPerm(new char[_nb]) {
 }
 
-PositionCoordinate::PositionCoordinate(uint nb, std::unordered_set<char> pieces, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm) :
+PositionCoordinate::PositionCoordinate(uint nb, std::unordered_set<char> pieces, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm, const std::string& path) :
     PositionCoordinate(nb, pieces, permToCube, cubeToPerm) {
-    buildMoveTable(allowedMoves, props);
+    buildMoveTable(allowedMoves, props, path);
 }
 
 PositionCoordinate::~PositionCoordinate() {

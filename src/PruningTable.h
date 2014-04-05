@@ -67,8 +67,11 @@ class PruningTable {
             }
 
 
+            uint lastDone = 0;
             char depth = 0;
-            while(done < nbEntries) {
+            //while(done < nbEntries) {
+            while(done != lastDone) {
+                lastDone = done;
                 for(uint i = 0; i < nbEntries; ++i) {
                     if(_pruningTable[i] == depth) {
                         std::array<uint, N> currentCoords;

@@ -10,9 +10,9 @@ OrientationCoordinate::OrientationCoordinate(uint nb, uint base, std::function<C
     _tempOrient(new char[_nb]) {
 }
 
-OrientationCoordinate::OrientationCoordinate(uint nb, uint base, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm) :
+OrientationCoordinate::OrientationCoordinate(uint nb, uint base, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm, const std::string& path) :
     OrientationCoordinate(nb, base, permToCube, cubeToPerm) {
-    buildMoveTable(allowedMoves, props);
+    buildMoveTable(allowedMoves, props, path);
 }
 
 OrientationCoordinate::~OrientationCoordinate() {

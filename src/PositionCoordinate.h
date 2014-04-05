@@ -7,7 +7,7 @@
 class PositionCoordinate : public Coordinate {
     public:
         PositionCoordinate(uint nb, std::unordered_set<char> pieces, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm);
-        PositionCoordinate(uint nb, std::unordered_set<char> pieces, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm);
+        PositionCoordinate(uint nb, std::unordered_set<char> pieces, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm, const std::string& path = "");
         virtual ~PositionCoordinate();
         virtual uint fromCube(const Cube& cube) const;
         virtual Cube toCube(uint coord) const;

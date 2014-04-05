@@ -9,9 +9,9 @@ PermutationCoordinate::PermutationCoordinate(uint nb, std::function<Cube (const 
     _tempPerm(new char[_nb]) {
 }
 
-PermutationCoordinate::PermutationCoordinate(uint nb, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm) :
+PermutationCoordinate::PermutationCoordinate(uint nb, const std::vector<uint>& allowedMoves, const CubeProperties& props, std::function<Cube (const char*)> permToCube, std::function<void (const Cube&, char*)> cubeToPerm, const std::string& path) :
     PermutationCoordinate(nb, permToCube, cubeToPerm) {
-    buildMoveTable(allowedMoves, props);
+    buildMoveTable(allowedMoves, props, path);
 }
 
 PermutationCoordinate::~PermutationCoordinate() {
