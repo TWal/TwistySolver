@@ -20,7 +20,10 @@ set(${PROJECT_NAME}_SOURCES
     src/Solver333.cpp
     src/Solver444.cpp
     src/Utils.cpp
+    src/Vision.cpp
 )
+
+find_package(OpenCV REQUIRED)
 
 add_library(
     ${PROJECT_NAME}_lib
@@ -28,10 +31,17 @@ add_library(
     ${${PROJECT_NAME}_SOURCES}
 )
 
+target_link_libraries(
+    ${PROJECT_NAME}_lib
+    ${OpenCV_LIBS}
+)
+
 add_executable(
     ${PROJECT_NAME}
     src/main.cpp
 )
+
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 target_link_libraries(
     ${PROJECT_NAME}

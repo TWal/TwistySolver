@@ -5,6 +5,8 @@
 #include "Solver444.h"
 #include "Parser333.h"
 #include "Utils.h"
+#include "Vision.h"
+#include "myconio.h"
 
 void printSolution(const std::vector<uint>& solution) {
     for(uint i : solution) {
@@ -87,7 +89,18 @@ int main(int argc, char** argv) {
 #ifndef USE_444
     Cube cube(3);
     if(argc == 1) {
-        cube = Parser333::queryCube();
+        printf("Use OpenCV? ");
+        int result = _getche();
+        printf("\n");
+        if(result == 'y' || result == 'Y' || result == 'o' || result == 'O') {
+            std::vector<std::string> output;
+            AXIS axisOrder[6] = {U, F, R, B, L, D};
+            Vision viz(1, true);
+            viz.scanCube(output);
+            cube = Parser333::parse(output, axisOrder);
+        } else {
+            cube = Parser333::queryCube();
+        }
     } else {
         cube = Parser333::parseArgs(argc, argv);
     }

@@ -7,7 +7,8 @@
 
 class Parser333 {
     public:
-        static Cube parse(const std::vector<std::string>& strings);
+        static Cube parse(const std::vector<std::string>& strings, AXIS axisOrder[6]);
+        static void cycleFaces(const std::vector<std::string>& strings, std::vector<std::string>& output, AXIS axisOrder[6]);
         static void colorToFace(const std::vector<std::string>& colors, std::vector<AXIS>& faces);
         static bool searchPiece(const std::vector<AXIS>& def, const uint* pieces, uint pieceNb, uint n, uint searchLimit, char& pieceOut);
         static uint getCornerOrient(const std::vector<AXIS>& def, CORNERS c);
