@@ -9,10 +9,10 @@ class Vision {
         typedef std::array<cv::Point, 4> Square;
         Vision(int device, bool debug = true);
 
-        void detectSquares(const cv::Mat& image, std::vector<Square>& output, int tresh, int dist, int minArea, int distDiff, int axisDiff);
+        void detectSquares(const cv::Mat& image, std::vector<Square>& output);
         void simplifySquares(const std::vector<Square>& squares, std::vector<Square>& output);
-        void keepSimilar(const std::vector<Square>& squares, std::vector<Square>& output, int tresh);
-        void orderSquares(std::vector<Square>& squares, std::vector<std::vector<Square>>& output);
+        void keepSimilar(const std::vector<Square>& squares, std::vector<Square>& output);
+        void orderSquares(std::vector<Square> squares, std::vector<std::vector<Square>>& output);
         void drawSquares(const cv::Mat& colors, const std::vector<Square>& squares, cv::Mat drawing, bool fill);
         void groupColors(const std::vector<cv::Scalar>& colors, std::vector<int>& output, int tresh);
         cv::Scalar detectColor(const cv::Mat& img, const Square& square);

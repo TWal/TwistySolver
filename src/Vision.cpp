@@ -30,16 +30,16 @@ Vision::Vision(int device, bool debug) :
     }
 }
 
-void Vision::detectSquares(const cv::Mat& image, std::vector<Square>& output, int tresh, int dist, int minArea, int distDiff, int axisDiff) {
-    for(int i = dist; i < (255 - dist); i += dist) {
-        cv::Mat current = (image > (i - tresh)) & (image < (i + tresh));
+void Vision::detectSquares(const cv::Mat& image, std::vector<Square>& output) {
+    for(int i = _detectDist; i < (255 - _detectDist); i += _detectDist) {
+        cv::Mat current = (image > (i - _detectTresh)) & (image < (i + _detectTresh));
         std::vector<std::vector<cv::Point> > contours;
         std::vector<cv::Vec4i> hierarchy;
         findContours(current, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
         for(int j = 0; j < contours.size(); ++j) {
             std::vector<cv::Point> approx;
             cv::approxPolyDP(cv::Mat(contours[j]), approx, cv::arcLength(cv::Mat(contours[j]), true)*0.04, true);
-            if(isSquare(approx, minArea, distDiff, axisDiff)) {
+            if(isSquare(approx, _minArea, _distDiff, _axisDiff)) {
                 output.push_back(sortSquare({{approx[0], approx[1], approx[2], approx[3]}}));
             }
         }
@@ -81,7 +81,7 @@ void Vision::simplifySquares(const std::vector<Square>& squares, std::vector<Squ
     }
 }
 
-void Vision::keepSimilar(const std::vector<Square>& squares, std::vector<Square>& output, int tresh) {
+void Vision::keepSimilar(const std::vector<Square>& squares, std::vector<Square>& output) {
     if(squares.empty()) {
         return;
     }
@@ -92,13 +92,13 @@ void Vision::keepSimilar(const std::vector<Square>& squares, std::vector<Square>
     std::sort(diags.begin(), diags.end());
     int medArea = diags[diags.size()/2];
     for(const Square& square : squares) {
-        if(fabs((distance(square[0], square[2]) / (float)medArea) - 1)*100 < tresh) {
+        if(fabs((distance(square[0], square[2]) / (float)medArea) - 1)*100 < _similarTresh) {
             output.push_back(square);
         }
     }
 }
 
-void Vision::orderSquares(std::vector<Square>& squares, std::vector<std::vector<Square>>& output) {
+void Vision::orderSquares(std::vector<Square> squares, std::vector<std::vector<Square>>& output) {
     std::vector<std::vector<size_t>> cols;
     std::unordered_set<size_t> done;
 
@@ -390,13 +390,13 @@ void Vision::detectStickers(int faceNb, bool debug) {
                 //cv::cvtColor(grey, drawing, CV_GRAY2RGB);
 
                 std::vector<Square> squares;
-                detectSquares(grey, squares, _detectTresh, _detectDist, _minArea, _distDiff, _axisDiff);
+                detectSquares(grey, squares);
                 if(_step == 3 && debug) {
                     drawSquares(frame, squares, drawing, false);
                     imshow("Win", drawing);
                 } else {
                     std::vector<Square> similarSquares;
-                    keepSimilar(squares, similarSquares, _similarTresh);
+                    keepSimilar(squares, similarSquares);
                     std::vector<Square> simplifiedSquares;
                     simplifySquares(similarSquares, simplifiedSquares);
                     std::vector<std::vector<Square>> ordered;
