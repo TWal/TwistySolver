@@ -233,6 +233,13 @@ void Vision::drawSquares(const cv::Mat& img, const std::vector<Square>& squares,
     }
 }
 
+float Vision::colorDistance(cv::Scalar c1, cv::Scalar c2) {
+    int l = (int)c1[0] - (int)c2[0];
+    int a = (int)c1[1] - (int)c2[1];
+    int b = (int)c1[2] - (int)c2[2];
+    return sqrt(l*l + a*a + b*b);
+}
+
 void Vision::groupColors(const std::vector<cv::Scalar>& colors, std::vector<int>& output, int tresh) {
     int nextColor = 0;
     output.assign(colors.size(), -1);
@@ -240,10 +247,7 @@ void Vision::groupColors(const std::vector<cv::Scalar>& colors, std::vector<int>
         if(output[i] == -1) {
             output[i] = nextColor;
             for(size_t j = i+1; j < colors.size(); ++j) {
-                if(output[j] == -1 &&
-                   abs(colors[i][0] - colors[j][0]) < tresh &&
-                   abs(colors[i][1] - colors[j][1]) < tresh &&
-                   abs(colors[i][2] - colors[j][2]) < tresh) {
+                if(output[j] == -1 && colorDistance(colors[i], colors[j]) < tresh) {
                     output[j] = nextColor;
                 }
             }
@@ -387,7 +391,6 @@ void Vision::detectStickers(int faceNb, bool debug) {
                 imshow("Win", grey);
             } else {
                 cv::Mat drawing = cv::Mat::zeros(frame.size(), CV_8UC3);
-                //cv::cvtColor(grey, drawing, CV_GRAY2RGB);
 
                 std::vector<Square> squares;
                 detectSquares(grey, squares);
@@ -402,11 +405,13 @@ void Vision::detectStickers(int faceNb, bool debug) {
                     std::vector<std::vector<Square>> ordered;
                     orderSquares(simplifiedSquares, ordered);
                     printf("Detected a %dx%d face\n", ordered.size(), ordered.size());
+                    cv::Mat frameLab;
+                    cv::cvtColor(frame, frameLab, CV_RGB2Lab);
                     if(faceNb != -1 && ordered.size() != 0) {
                         _stickers[faceNb].assign(ordered.size(), std::vector<cv::Scalar>(ordered.size()));
                         for(size_t i = 0; i < ordered.size(); ++i) {
                             for(size_t j = 0; j < ordered[i].size(); ++j) {
-                                _stickers[faceNb][i][j] = detectColor(frame, ordered[i][j]);
+                                _stickers[faceNb][i][j] = detectColor(frameLab, ordered[i][j]);
                             }
                         }
                     }

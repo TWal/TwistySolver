@@ -14,6 +14,7 @@ class Vision {
         void keepSimilar(const std::vector<Square>& squares, std::vector<Square>& output);
         void orderSquares(std::vector<Square> squares, std::vector<std::vector<Square>>& output);
         void drawSquares(const cv::Mat& colors, const std::vector<Square>& squares, cv::Mat drawing, bool fill);
+        float colorDistance(cv::Scalar c1, cv::Scalar c2);
         void groupColors(const std::vector<cv::Scalar>& colors, std::vector<int>& output, int tresh);
         cv::Scalar detectColor(const cv::Mat& img, const Square& square);
         bool isSquare(const std::vector<cv::Point>& approx, int minArea, int distDiff, int axisDiff);
