@@ -74,7 +74,7 @@ void Solver333::solve(const Cube& cube, const std::function<bool (const std::vec
             }
             _phase1.convertSolutionToMoves(solution1);
 
-            if(phase2MovesSet.count(solution1.back())) {
+            if(!solution1.empty() && phase2MovesSet.count(solution1.back())) {
                 continue;
             }
 
