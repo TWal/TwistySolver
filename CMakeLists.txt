@@ -14,6 +14,7 @@ set(${PROJECT_NAME}_SOURCES
     src/CubeProperties.cpp
     src/Coordinate.cpp
     src/OrientationCoordinate.cpp
+    src/ParityCoordinate.cpp
     src/PermutationCoordinate.cpp
     src/PositionCoordinate.cpp
     src/Parser333.cpp

@@ -50,11 +50,6 @@ void Coordinate::buildMoveTable(const std::vector<uint>& allowedMoves, const Cub
         }
     }
 
-    std::unordered_set<uint> data;
-    for(uint i = 0; i < _size*_nbMove; ++i) {
-        data.insert(_moveTable[i]);
-    }
-
     if(!path.empty()) {
         FILE* file = fopen(path.c_str(), "wb");
         if(!file) {
