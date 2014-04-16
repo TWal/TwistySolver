@@ -124,3 +124,19 @@ Cube& Cube::setNEdgePerm(uint x, const char* data) {
     return *this;
 }
 
+const CornerPiece& Cube::getCorner() const {
+    return _corners;
+}
+
+const EdgePiece& Cube::getEdge() const {
+    return _edges;
+}
+
+const NEdgePiece& Cube::getNEdge(uint x) const {
+    return _nedges[x];
+}
+
+const CenterPiece& Cube::getCenter(uint x, uint y) const {
+    return _centers[((_size-2)/2)*x+y];
+}
+

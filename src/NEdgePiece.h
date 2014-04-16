@@ -17,6 +17,8 @@ class NEdgePiece {
 
         void setPerm(const char* perm);
 
+        void convertToGroupedEdges(char* perm) const;
+
         static const char permMove[2][6][24];
     private:
         char _perm[24];

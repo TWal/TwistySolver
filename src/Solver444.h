@@ -9,6 +9,7 @@
 #include "PositionCoordinate.h"
 #include "Phase.h"
 #include "CubeProperties.h"
+#include "Solver333.h"
 
 class Solver444 {
     public:
@@ -50,6 +51,7 @@ class Solver444 {
         Phase<6, PhaseList<0, 1>, PhaseList<2, 3>, PhaseList<4, 5>> _phase3;
         Phase<10, PhaseList<0, 1>, PhaseList<2, 3>, PhaseList<4, 5>, PhaseList<6, 7>, PhaseList<8, 9>> _phase4;
         Phase<6, PhaseList<0, 2, 3>, PhaseList<1, 4, 5>> _phase5;
+        Solver333 _solver333;
 };
 
 

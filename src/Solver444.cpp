@@ -296,11 +296,42 @@ void Solver444::solve(const Cube& cube, const std::function<bool (const std::vec
     _phase5.solve(solution5, 0, 1000);
     _phase5.convertSolutionToMoves(solution5);
 
+    for(uint move : solution5) {
+        for(int i = 0; i <= Utils::getNb(move); ++i) {
+            cube2.applyMult(_props.makeCube((AXIS)(Utils::getAxis(move)), Utils::getLayer(move)));
+        }
+    }
+
+    Cube cube3(3);
+    char edgePerm[12];
+    cube2.getNEdge(0).convertToGroupedEdges(edgePerm);
+    cube3.setEdgePerm(edgePerm);
+    cube3.setCornerPerm(cube2.getCornerPerm());
+    cube3.setCornerOri(cube2.getCornerOri());
+
+    std::vector<uint> solution6;
+
+    //Fix parity   TODO: do it the right way
+    if(ParityCoordinate::parToInt(cube3.getEdgePerm(), 12) != ParityCoordinate::parToInt(cube3.getCornerPerm(), 8)) {
+        //Insert parity algorithm
+        solution6.assign({7, 25, 1, 7, 25, 19, 7, 25, 1, 19});
+        std::swap(edgePerm[UF], edgePerm[UB]);
+        cube3.setEdgePerm(edgePerm);
+    }
+    std::vector<uint> solution7;
+    _solver333.solve(cube3, [&](const std::vector<uint>& solution) {
+        solution7.assign(solution.begin(), solution.end());
+        return false;
+    });
+
     std::vector<uint> solution = solution1;
     solution.insert(solution.end(), solution2.begin(), solution2.end());
     solution.insert(solution.end(), solution3.begin(), solution3.end());
     solution.insert(solution.end(), solution4.begin(), solution4.end());
     solution.insert(solution.end(), solution5.begin(), solution5.end());
+    solution.insert(solution.end(), solution6.begin(), solution6.end());
+    solution.insert(solution.end(), solution7.begin(), solution7.end());
+
     callback(solution);
 }
 

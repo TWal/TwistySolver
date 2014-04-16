@@ -34,6 +34,11 @@ class Cube {
         Cube& setCenterPerm(uint x, uint y, const char* data);
         Cube& setNEdgePerm(uint x, const char* data);
 
+        const CornerPiece& getCorner() const;
+        const EdgePiece& getEdge() const;
+        const NEdgePiece& getNEdge(uint x) const;
+        const CenterPiece& getCenter(uint x, uint y) const;
+
     private:
         CornerPiece _corners;
         EdgePiece _edges;

@@ -73,3 +73,10 @@ void NEdgePiece::setPerm(const char* perm) {
     memcpy(_perm, perm, 24);
 }
 
+void NEdgePiece::convertToGroupedEdges(char* perm) const {
+    //Suppose the edges are grouped and oriented
+    for(int i = 0; i < 12; ++i) {
+        perm[i] = _perm[2*i]/2;
+    }
+}
+
