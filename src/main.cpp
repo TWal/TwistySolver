@@ -4,6 +4,7 @@
 #include "Solver333.h"
 #include "Solver444.h"
 #include "Parser333.h"
+#include "Parser444.h"
 #include "Utils.h"
 #include "Vision.h"
 #include "myconio.h"
@@ -75,19 +76,13 @@ void printSolution(const std::vector<uint>& solution) {
     printf(" (%zd)\n", solution.size());
 }
 
-//#define USE_444
-
-int main(int argc, char** argv) {
+template<typename Solver, typename Parser>
+void queryAndSolve(int argc, char** argv) {
     printf("Building move tables and pruning tables...\n");
-#ifndef USE_444
-    Solver333 solver;
-#else
-    Solver444 solver;
-#endif
+    Solver solver;
     printf("Done.\n");
+    Cube cube;
 
-#ifndef USE_444
-    Cube cube(3);
     if(argc == 1) {
         printf("Use OpenCV? ");
         int result = _getche();
@@ -97,29 +92,28 @@ int main(int argc, char** argv) {
             AXIS axisOrder[6] = {U, F, R, B, L, D};
             Vision viz(1, true);
             viz.scanCube(output);
-            cube = Parser333::parse(output, axisOrder);
+            cube = Parser::parse(output, axisOrder);
         } else {
-            cube = Parser333::queryCube();
+            cube = Parser::queryCube();
         }
     } else {
-        cube = Parser333::parseArgs(argc, argv);
+        cube = Parser::parseArgs(argc, argv);
     }
-#else
-    Cube cube(4);
-    cube.makeIdentity();
-    for(int i = 0; i < 2; ++i) {
-        for(int j = 0; j < 6; ++j) {
-            cube.applyMult(Cube(4, (AXIS)j, 0));
-            cube.applyMult(Cube(4, (AXIS)j, 1));
-        }
-    }
-
-#endif
 
     solver.solve(cube, [](const std::vector<uint>& solution) {
         printSolution(solution);
         return true;
     });
+}
 
+int main(int argc, char** argv) {
+    printf("Cube size? ");
+    int result = _getche() - '0';
+    printf("\n");
+    if(result == 3) {
+        queryAndSolve<Solver333, Parser333>(argc, argv);
+    } else if(result == 4) {
+        queryAndSolve<Solver444, Parser444>(argc, argv);
+    }
     return 0;
 }

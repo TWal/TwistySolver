@@ -18,10 +18,12 @@ set(${PROJECT_NAME}_SOURCES
     src/PermutationCoordinate.cpp
     src/PositionCoordinate.cpp
     src/Parser333.cpp
+    src/Parser444.cpp
     src/Solver333.cpp
     src/Solver444.cpp
     src/Utils.cpp
     src/Vision.cpp
+    src/myconio.cpp
 )
 
 find_package(OpenCV REQUIRED)
